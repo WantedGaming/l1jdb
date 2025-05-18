@@ -133,3 +133,9 @@
 2025-05-18 10:02:29 Error: [2] Undefined variable $currentUser in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
 2025-05-18 10:02:29 Error: [2] Trying to access array offset on value of type null in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
 2025-05-18 10:02:29 Error: [8192] htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-18 10:03:49 Error: [2] Undefined variable $currentUser in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-18 10:03:49 Error: [2] Trying to access array offset on value of type null in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-18 10:03:49 Error: [8192] htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-18 10:03:55 Error: [2] Undefined variable $currentUser in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-18 10:03:55 Error: [2] Trying to access array offset on value of type null in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-18 10:03:55 Error: [8192] htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\l1jdb\includes\header.php on line 66

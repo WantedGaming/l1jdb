@@ -146,40 +146,45 @@ include '../../includes/hero.php';
             
             <!-- Weapons Grid -->
             <div class="card-grid">
-                <?php if (empty($weapons['data'])): ?>
-                <div class="no-results">
-                    <p>No weapons found. Please try a different search or filter.</p>
-                </div>
-                <?php else: ?>
-                    <?php foreach ($weapons['data'] as $weapon): ?>
-                    <div class="card">
-                        <img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars($weapon['desc_en']); ?>" class="card-img">
-                        <div class="card-content">
-                            <h3 class="card-title"><?php echo htmlspecialchars($weapon['desc_en']); ?></h3>
-                            <p class="card-text"><?php echo htmlspecialchars($weapon['desc_kr']); ?></p>
-                            <div class="card-stats">
-                                <div class="card-stat">
-                                    <span class="card-stat-label">Damage:</span>
-                                    <span class="card-stat-value"><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></span>
-                                </div>
-                                <div class="card-stat">
-                                    <span class="card-stat-label">Type:</span>
-                                    <span class="card-stat-value"><?php echo $weapon['type']; ?></span>
-                                </div>
-                                <div class="card-stat">
-                                    <span class="card-stat-label">Grade:</span>
-                                    <span class="card-stat-value"><?php echo $weapon['itemGrade']; ?></span>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <span class="card-category"><?php echo $weapon['material']; ?></span>
-                                <a href="detail.php?id=<?php echo $weapon['item_id']; ?>" class="card-link">View Details &rarr;</a>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+				<?php if (empty($weapons['data'])): ?>
+				<div class="no-results">
+					<p>No weapons found. Please try a different search or filter.</p>
+				</div>
+				<?php else: ?>
+					<?php foreach ($weapons['data'] as $weapon): ?>
+					<div class="card item-card">
+						<a href="detail.php?id=<?php echo $weapon['item_id']; ?>" class="card-link-overlay"></a>
+						<div class="card-header">
+							<h3 class="card-header-title"><?php echo $weapon['type']; ?></h3>
+							<span class="card-badge"><?php echo $weapon['itemGrade']; ?></span>
+						</div>
+						<div class="card-img-container">
+							<img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars($weapon['desc_en']); ?>" class="card-img">
+						</div>
+						<div class="card-content">
+							<h3 class="card-title"><?php echo htmlspecialchars($weapon['desc_en']); ?></h3>
+							<p class="card-text"><?php echo htmlspecialchars($weapon['desc_kr']); ?></p>
+							<div class="card-stats">
+								<div class="card-stat">
+									<span class="card-stat-label">Damage:</span>
+									<span class="card-stat-value"><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></span>
+								</div>
+								<div class="card-stat">
+									<span class="card-stat-label">Material:</span>
+									<span class="card-stat-value"><?php echo $weapon['material']; ?></span>
+								</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<span class="card-category">View Details</span>
+							<div class="card-indicator">
+								<i class="fas fa-eye"></i>
+							</div>
+						</div>
+					</div>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</div>
             
             <!-- Pagination -->
             <?php if ($weapons['total_pages'] > 1): ?>
