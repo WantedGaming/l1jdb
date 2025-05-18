@@ -1,0 +1,324 @@
+/* Responsive styles for MMORPG Database */
+
+/* Tablets and small desktops */
+@media (max-width: 992px) {
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    /* Header adjustments */
+    .header-container {
+        flex-wrap: wrap;
+        padding: var(--spacing-sm) 0;
+    }
+    
+    .logo {
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .nav {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Hero section adjustments */
+    .hero {
+        height: 600px;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    /* Card grid adjustments */
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    /* Detail page adjustments */
+    .detail-stats {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    /* Admin dashboard adjustments */
+    .admin-content-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-main-content {
+        order: 2;
+    }
+    
+    .admin-sidebar {
+        order: 1;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .admin-stats {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    /* Form adjustments */
+    .admin-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+    /* Header adjustments */
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .logo {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .nav-list {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-item {
+        margin: 0 var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    /* Hero section adjustments */
+    .hero {
+        height: 500px;
+        padding: 0 var(--spacing-md);
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .search-form {
+        flex-direction: column;
+    }
+    
+    .search-input {
+        margin-bottom: var(--spacing-sm);
+        border-radius: 4px;
+    }
+    
+    .search-button {
+        width: 100%;
+    }
+    
+    /* Section adjustments */
+    .section-title {
+        font-size: 1.75rem;
+    }
+    
+    /* Card grid adjustments */
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Detail page adjustments */
+    .detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .detail-img {
+        margin-bottom: var(--spacing-md);
+        margin-right: 0;
+    }
+    
+    .detail-title {
+        font-size: 1.75rem;
+    }
+    
+    .detail-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Filter form adjustments */
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+    }
+    
+    .filter-button {
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    /* Admin header adjustments */
+    .admin-header-container {
+        flex-direction: column;
+    }
+    
+    .admin-nav {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .admin-nav-list {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .admin-nav-item {
+        margin: 0;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .admin-user-dropdown {
+        margin-left: 0;
+        margin-top: var(--spacing-md);
+    }
+    
+    /* Admin dashboard adjustments */
+    .admin-dashboard-header {
+        flex-direction: column;
+    }
+    
+    .admin-dashboard-title {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Admin table adjustments */
+    .admin-table {
+        min-width: 600px; /* Force horizontal scrolling */
+    }
+    
+    .admin-table-container {
+        overflow-x: auto;
+    }
+    
+    .admin-header-actions {
+        flex-direction: column;
+    }
+    
+    .admin-header-buttons {
+        margin-top: var(--spacing-md);
+    }
+    
+    /* Admin form adjustments */
+    .admin-form-section {
+        padding: var(--spacing-md);
+    }
+    
+    .admin-form-row {
+        flex-direction: column;
+    }
+    
+    .admin-form-buttons {
+        flex-direction: column;
+    }
+    
+    .admin-form-buttons .admin-button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* Footer adjustments */
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    /* Hero section adjustments */
+    .hero {
+        height: 450px;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    /* Section title adjustments */
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    /* Card adjustments */
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    /* Detail page adjustments */
+    .detail-title {
+        font-size: 1.5rem;
+    }
+    
+    .detail-stat-title {
+        font-size: 1.1rem;
+    }
+    
+    /* Admin form adjustments */
+    .admin-form-section-title {
+        font-size: 1.1rem;
+    }
+    
+    .admin-form-container {
+        padding: var(--spacing-md);
+    }
+    
+    /* Login page adjustments */
+    .login-card {
+        max-width: 100%;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .header, .footer, .hero, .admin-header, .admin-footer {
+        display: none;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+    }
+    
+    .detail-container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .detail-footer, .admin-header-actions {
+        display: none;
+    }
+    
+    a {
+        color: black;
+        text-decoration: none;
+    }
+    
+    .card {
+        page-break-inside: avoid;
+    }
+}
