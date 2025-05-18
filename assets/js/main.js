@@ -131,3 +131,46 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = 'block';
     evt.currentTarget.className += ' active';
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Make cards clickable
+    initClickableCards();
+});
+
+/**
+ * Initialize clickable cards
+ */
+function initClickableCards() {
+    // Get all cards with the card-link-overlay
+    const cards = document.querySelectorAll('.card-link-overlay');
+    
+    // Add click event listeners to all cards
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            if (href) {
+                window.location.href = href;
+            }
+        });
+    });
+    
+    // For better accessibility - make cards keyboard navigable
+    cards.forEach(card => {
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', 'View details');
+        
+        // Handle keyboard events
+        card.addEventListener('keydown', function(e) {
+            // Enter or space key
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (href) {
+                    window.location.href = href;
+                }
+            }
+        });
+    });
+}
