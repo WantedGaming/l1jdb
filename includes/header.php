@@ -11,6 +11,12 @@ if (session_status() == PHP_SESSION_NONE) {
 $isLoggedIn = isset($user) && $user->isLoggedIn();
 $isAdmin = $isLoggedIn && $user->isAdmin();
 
+// Get current user if logged in
+$currentUser = null;
+if ($isLoggedIn) {
+    $currentUser = $user->getCurrentUser();
+}
+
 // Set default page title if not set
 if (!isset($pageTitle)) {
     $pageTitle = SITE_NAME;
@@ -62,7 +68,7 @@ if (!isset($pageTitle)) {
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">Account</a>
                         <div class="dropdown-menu">
-                            <?php if ($isLoggedIn): ?>
+                            <?php if ($isLoggedIn && $currentUser): ?>
                             <span class="dropdown-item user-greeting">Hello, <?php echo htmlspecialchars($currentUser['login']); ?></span>
                             <a href="<?php echo SITE_URL; ?>/admin/logout.php" class="dropdown-item">Logout</a>
                             <?php else: ?>
