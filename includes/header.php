@@ -33,7 +33,7 @@ if (!isset($pageTitle)) {
         <div class="container header-container">
             <!-- Logo -->
             <a href="<?php echo SITE_URL; ?>" class="logo">
-                <img src="<?php echo SITE_URL; ?>/assets/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo">
+                <img src="<?php echo SITE_URL; ?>/assets/img/favicon/12650.png" alt="<?php echo SITE_NAME; ?> Logo">
                 <h1><?php echo SITE_NAME; ?></h1>
             </a>
             

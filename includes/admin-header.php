@@ -41,7 +41,7 @@ if (!isset($pageTitle)) {
         <div class="container admin-header-container">
             <!-- Admin Logo -->
             <a href="<?php echo SITE_URL; ?>/admin/index.php" class="admin-logo">
-                <img src="<?php echo SITE_URL; ?>/assets/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo">
+                <img src="<?php echo SITE_URL; ?>/assets/img/favicon/12650.png" alt="<?php echo SITE_NAME; ?> Logo">
                 <h1><?php echo SITE_NAME; ?> Admin</h1>
             </a>
             
