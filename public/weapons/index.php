@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../classes/User.php';
 require_once __DIR__ . '/../../classes/Weapon.php';
+require_once __DIR__ . '/../../includes/functions.php'; // Add this line to include our new helper functions
 
 // Initialize session
 init_session();
@@ -19,7 +20,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $page = max(1, $page); // Ensure page is at least 1
 
 // Handle search
-$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+$searchTerm = isset($_GET['q']) ? trim($_GET['q']) : ''; // Changed from 'search' to 'q' to match the hero search form
 
 // Handle filters
 $filters = [];
@@ -34,14 +35,6 @@ if (isset($_GET['filter'])) {
     
     if (!empty($_GET['grade'])) {
         $filters['grade'] = $_GET['grade'];
-    }
-    
-    if (!empty($_GET['min_dmg'])) {
-        $filters['min_dmg'] = (int)$_GET['min_dmg'];
-    }
-    
-    if (!empty($_GET['max_dmg'])) {
-        $filters['max_dmg'] = (int)$_GET['max_dmg'];
     }
 }
 
@@ -77,21 +70,16 @@ include '../../includes/hero.php';
                 <h2 class="category-title"><?php echo $pageTitle; ?></h2>
             </div>
             
-            <!-- Search and Filters -->
+            <!-- Filters - Modified for single row layout -->
             <div class="filters">
-                <form action="index.php" method="get" class="filter-form">
-                    <div class="filter-group">
-                        <label for="search" class="filter-label">Search</label>
-                        <input type="text" id="search" name="search" class="filter-input" value="<?php echo htmlspecialchars($searchTerm); ?>" placeholder="Search weapons...">
-                    </div>
-                    
+                <form action="index.php" method="get" class="filter-form filter-form-inline">
                     <div class="filter-group">
                         <label for="type" class="filter-label">Weapon Type</label>
                         <select id="type" name="type" class="filter-select">
                             <option value="">All Types</option>
                             <?php foreach ($weaponTypes as $type): ?>
                             <option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
-                                <?php echo $type; ?>
+                                <?php echo formatWeaponType($type); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -103,7 +91,7 @@ include '../../includes/hero.php';
                             <option value="">All Materials</option>
                             <?php foreach ($weaponMaterials as $material): ?>
                             <option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
-                                <?php echo $material; ?>
+                                <?php echo formatMaterial($material); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -121,20 +109,10 @@ include '../../includes/hero.php';
                         </select>
                     </div>
                     
-                    <div class="filter-group">
-                        <label for="min_dmg" class="filter-label">Min Damage</label>
-                        <input type="number" id="min_dmg" name="min_dmg" class="filter-input" value="<?php echo isset($filters['min_dmg']) ? $filters['min_dmg'] : ''; ?>" placeholder="Min Damage">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="max_dmg" class="filter-label">Max Damage</label>
-                        <input type="number" id="max_dmg" name="max_dmg" class="filter-input" value="<?php echo isset($filters['max_dmg']) ? $filters['max_dmg'] : ''; ?>" placeholder="Max Damage">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">&nbsp;</label>
+                    <div class="filter-actions">
                         <input type="hidden" name="filter" value="1">
                         <button type="submit" class="filter-button">Apply Filters</button>
+                        <a href="index.php" class="filter-reset">Reset</a>
                     </div>
                 </form>
             </div>
@@ -146,51 +124,50 @@ include '../../includes/hero.php';
             
             <!-- Weapons Grid -->
             <div class="card-grid">
-				<?php if (empty($weapons['data'])): ?>
-				<div class="no-results">
-					<p>No weapons found. Please try a different search or filter.</p>
-				</div>
-				<?php else: ?>
-					<?php foreach ($weapons['data'] as $weapon): ?>
-					<div class="card item-card">
-						<a href="detail.php?id=<?php echo $weapon['item_id']; ?>" class="card-link-overlay"></a>
-						<div class="card-header">
-							<h3 class="card-header-title"><?php echo $weapon['type']; ?></h3>
-							<span class="card-badge"><?php echo $weapon['itemGrade']; ?></span>
-						</div>
-						<div class="card-img-container">
-							<img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars($weapon['desc_en']); ?>" class="card-img">
-						</div>
-						<div class="card-content">
-							<h3 class="card-title"><?php echo htmlspecialchars($weapon['desc_en']); ?></h3>
-							<p class="card-text"><?php echo htmlspecialchars($weapon['desc_kr']); ?></p>
-							<div class="card-stats">
-								<div class="card-stat">
-									<span class="card-stat-label">Damage:</span>
-									<span class="card-stat-value"><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></span>
-								</div>
-								<div class="card-stat">
-									<span class="card-stat-label">Material:</span>
-									<span class="card-stat-value"><?php echo $weapon['material']; ?></span>
-								</div>
-							</div>
-						</div>
-						<div class="card-footer">
-							<span class="card-category">View Details</span>
-							<div class="card-indicator">
-								<i class="fas fa-eye"></i>
-							</div>
-						</div>
-					</div>
-					<?php endforeach; ?>
-				<?php endif; ?>
-			</div>
+                <?php if (empty($weapons['data'])): ?>
+                <div class="no-results">
+                    <p>No weapons found. Please try a different search or filter.</p>
+                </div>
+                <?php else: ?>
+                    <?php foreach ($weapons['data'] as $weapon): ?>
+                    <div class="card item-card">
+                        <a href="detail.php?id=<?php echo $weapon['item_id']; ?>" class="card-link-overlay"></a>
+                        <div class="card-header">
+                            <h3 class="card-header-title"><?php echo formatWeaponType($weapon['type']); ?></h3>
+                            <span class="card-badge"><?php echo $weapon['itemGrade']; ?></span>
+                        </div>
+                        <div class="card-img-container">
+                            <img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?>" class="card-img">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title"><?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?></h3>
+                            <div class="card-stats">
+                                <div class="card-stat">
+                                    <span class="card-stat-label">Damage:</span>
+                                    <span class="card-stat-value"><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></span>
+                                </div>
+                                <div class="card-stat">
+                                    <span class="card-stat-label">Material:</span>
+                                    <span class="card-stat-value"><?php echo formatMaterial($weapon['material']); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-category">View Details</span>
+                            <div class="card-indicator">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
             
             <!-- Pagination -->
             <?php if ($weapons['total_pages'] > 1): ?>
             <div class="pagination">
                 <?php if ($page > 1): ?>
-                <a href="?page=<?php echo $page - 1; ?><?php echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">&laquo; Previous</a>
+                <a href="?page=<?php echo $page - 1; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">&laquo; Previous</a>
                 <?php endif; ?>
                 
                 <?php
@@ -198,14 +175,14 @@ include '../../includes/hero.php';
                 $endPage = min($weapons['total_pages'], $page + 2);
                 
                 if ($startPage > 1): ?>
-                <a href="?page=1<?php echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">1</a>
+                <a href="?page=1<?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">1</a>
                 <?php if ($startPage > 2): ?>
                 <span class="pagination-ellipsis">...</span>
                 <?php endif; ?>
                 <?php endif; ?>
                 
                 <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                <a href="?page=<?php echo $i; ?><?php echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link <?php echo $i === $page ? 'active' : ''; ?>">
+                <a href="?page=<?php echo $i; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link <?php echo $i === $page ? 'active' : ''; ?>">
                     <?php echo $i; ?>
                 </a>
                 <?php endfor; ?>
@@ -214,13 +191,13 @@ include '../../includes/hero.php';
                 <?php if ($endPage < $weapons['total_pages'] - 1): ?>
                 <span class="pagination-ellipsis">...</span>
                 <?php endif; ?>
-                <a href="?page=<?php echo $weapons['total_pages']; ?><?php echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">
+                <a href="?page=<?php echo $weapons['total_pages']; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">
                     <?php echo $weapons['total_pages']; ?>
                 </a>
                 <?php endif; ?>
                 
                 <?php if ($page < $weapons['total_pages']): ?>
-                <a href="?page=<?php echo $page + 1; ?><?php echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">Next &raquo;</a>
+                <a href="?page=<?php echo $page + 1; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">Next &raquo;</a>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
