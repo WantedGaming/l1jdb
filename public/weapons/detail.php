@@ -45,13 +45,12 @@ include '../../includes/hero.php';
     <section class="detail-section">
         <div class="container">
             <div class="detail-container">
-                <div class="detail-header">
-                    <div>
-                        <h1 class="detail-title"><?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?></h1>
-                        <p class="detail-category"><?php echo formatWeaponType($weapon['type']); ?> - <?php echo $weapon['itemGrade']; ?> Grade</p>
-                        <div class="detail-id">
-                            <span>Item ID: <?php echo $weapon['item_id']; ?></span>
-                        </div>
+                <!-- Title Card -->
+                <div class="detail-title-card">
+                    <h1 class="detail-title"><?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?></h1>
+                    <p class="detail-category"><?php echo formatWeaponType($weapon['type']); ?> - <?php echo $weapon['itemGrade']; ?> Grade</p>
+                    <div class="detail-id">
+                        <span>Item ID: <?php echo $weapon['item_id']; ?></span>
                     </div>
                 </div>
                 
@@ -64,7 +63,9 @@ include '../../includes/hero.php';
                         </div>
                     </div>
                     
-                    <div class="detail-stats-wrapper">
+                    <!-- Stats Card -->
+                    <div class="detail-stats-card">
+                        <h3 class="detail-stat-title">Stats</h3>
                         <div class="detail-stats">
                             <div class="detail-stat-group">
                                 <h3 class="detail-stat-title">Basic Information</h3>
@@ -291,7 +292,7 @@ include '../../includes/hero.php';
                 
                 <!-- Class Restrictions - renamed to Can Use -->
                 <div class="detail-classes-section">
-                    <h3 class="detail-stat-title">Can Use</h3>
+                    <h3 class="detail-stat-title">Used By</h3>
                     
                     <div class="detail-classes">
                         <div class="detail-class <?php echo $weapon['use_royal'] ? 'can-use' : 'cannot-use'; ?>">
@@ -348,9 +349,17 @@ include '../../includes/hero.php';
                 
                 <!-- Monsters Dropped By (placeholder) -->
                 <div class="detail-drops-section">
-                    <h3 class="detail-stat-title">Monsters Dropped By</h3>
+                    <h3 class="detail-stat-title">Dropped By</h3>
                     <div class="detail-drops-content">
                         <p class="detail-placeholder-text">This information will be updated soon.</p>
+                    </div>
+                </div>
+				
+				<!-- Can be Crafted, only show if it can be crafted -->
+				<div class="detail-drops-section">
+                    <h3 class="detail-stat-title">Crafting</h3>
+                    <div class="detail-drops-content">
+                        <p class="detail-placeholder-text">This information will be updated soon. This section should only be shown if the item can be crafted.</p>
                     </div>
                 </div>
                 
