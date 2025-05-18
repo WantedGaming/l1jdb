@@ -9,7 +9,7 @@
             <div class="footer-container">
                 <div class="footer-section">
                     <div class="footer-logo">
-                        <img src="<?php echo SITE_URL; ?>/assets/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo">
+                        <img src="<?php echo SITE_URL; ?>/assets/img/favicon/favicon.ico" alt="<?php echo SITE_NAME; ?> Logo">
                     </div>
                     <p class="footer-text">
                         <?php echo SITE_NAME; ?> is a comprehensive database website for the MMORPG game world.

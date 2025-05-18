@@ -377,6 +377,9 @@ a:hover {
     height: 180px;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card-img-container::after {
@@ -389,19 +392,25 @@ a:hover {
     background: linear-gradient(to right, transparent, var(--accent), transparent);
 }
 
-/* Card image styling */
+/* Card image styling - Updated to fix blown up images */
 .card-img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
     padding: 20px;
 }
 
+/* Category cards should also use contain to avoid stretching */
 .category-card .card-img {
-    object-fit: cover;
-    padding: 0;
+    object-fit: contain;
+    padding: 20px;
+    width: auto;
+    height: auto;
+    max-width: 80%;
+    max-height: 80%;
 }
 
+/* Keep item cards consistent with general styling */
 .item-card .card-img {
     object-fit: contain;
     padding: 20px;
@@ -539,15 +548,124 @@ a:hover {
     color: white;
 }
 
-.recent-list-meta {
+/* Activity Feed Styles */
+.activity-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.activity-feed {
+    background-color: var(--primary);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--card-shadow);
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.activity-item {
     display: flex;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
+    align-items: center;
+    padding: var(--spacing-md);
+    border-left: 4px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background-color var(--transition-speed);
+    position: relative;
+}
+
+.activity-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+/* Activity types with different colors */
+.activity-added {
+    border-left-color: #28a745; /* Green for new additions */
+}
+
+.activity-updated {
+    border-left-color: #ffc107; /* Yellow for updates */
+}
+
+.activity-removed {
+    border-left-color: #dc3545; /* Red for removals */
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-right: var(--spacing-md);
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-icon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 4px;
 }
 
-.recent-list-type {
-    margin-right: var(--spacing-md);
+.activity-type {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.activity-added .activity-type {
+    color: #28a745;
+}
+
+.activity-updated .activity-type {
+    color: #ffc107;
+}
+
+.activity-removed .activity-type {
+    color: #dc3545;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.activity-message {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+}
+
+.activity-message strong {
+    color: white;
+    font-weight: 500;
+}
+
+/* Small screen adjustments */
+@media (max-width: 576px) {
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .activity-time {
+        margin-top: 2px;
+    }
 }
 
 .recent-list-subtitle {
@@ -579,13 +697,23 @@ a:hover {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.recent-list-more {
-    color: var(--accent);
-    font-weight: 500;
+/* Activity Feed Custom Scrollbar */
+.activity-feed::-webkit-scrollbar {
+    width: 8px;
 }
 
-.recent-list-more:hover {
-    text-decoration: underline;
+.activity-feed::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Category Index Pages */

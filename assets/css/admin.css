@@ -132,19 +132,38 @@ body.admin-body {
     font-weight: 500;
 }
 
-.login-input {
-    width: 100%;
-    padding: var(--spacing-md);
+/* Updated input wrapper to properly position icons */
+.login-input-wrapper {
+    display: flex;
+    align-items: center;
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius);
-    color: var(--text);
     transition: border-color var(--transition-speed);
+}
+
+.login-input-wrapper:focus-within {
+    border-color: var(--admin-accent);
+}
+
+.login-input-wrapper i {
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+}
+
+.login-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    background-color: transparent;
+    border: none;
+    color: var(--text);
 }
 
 .login-input:focus {
     outline: none;
-    border-color: var(--admin-accent);
 }
 
 .login-button {
@@ -172,6 +191,40 @@ body.admin-body {
 
 .login-footer a {
     color: var(--admin-accent);
+}
+
+.login-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 3px solid var(--admin-danger);
+    color: var(--admin-danger);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius);
+}
+
+.login-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 3px solid var(--admin-success);
+    color: var(--admin-success);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius);
+}
+
+/* Logout button styling */
+.logout-button {
+    background-color: var(--admin-danger);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.logout-button:hover {
+    background-color: #bd2130;
 }
 
 /* Admin Dashboard */

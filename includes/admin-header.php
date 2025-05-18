@@ -33,7 +33,7 @@ if (!isset($pageTitle)) {
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css">
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="shortcut icon" href="<?php echo SITE_URL; ?>/assets/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo SITE_URL; ?>/assets/img/favicon/favicon.ico" type="image/x-icon">
 </head>
 <body class="admin-body">
     <!-- Admin Header -->
@@ -41,7 +41,7 @@ if (!isset($pageTitle)) {
         <div class="container admin-header-container">
             <!-- Admin Logo -->
             <a href="<?php echo SITE_URL; ?>/admin/index.php" class="admin-logo">
-                <img src="<?php echo SITE_URL; ?>/assets/img/favicon/12650.png" alt="<?php echo SITE_NAME; ?> Logo">
+                <img src="<?php echo SITE_URL; ?>/assets/img/favicon/favicon.ico" alt="<?php echo SITE_NAME; ?> Logo">
                 <h1><?php echo SITE_NAME; ?> Admin</h1>
             </a>
             
@@ -73,7 +73,7 @@ if (!isset($pageTitle)) {
                 <!-- Admin User Dropdown -->
                 <div class="admin-user-dropdown dropdown">
                     <div class="dropdown-toggle">
-                        <img src="<?php echo SITE_URL; ?>/assets/images/admin-avatar.png" alt="Admin" class="admin-user-img">
+                        <img src="<?php echo SITE_URL; ?>/assets/img/favicon/12650.png" alt="Admin" class="admin-user-img">
                         <span class="admin-user-name"><?php echo htmlspecialchars($currentUser['login']); ?></span>
                     </div>
                     <div class="dropdown-menu">

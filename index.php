@@ -38,6 +38,76 @@ $recentMonsters = $monster->getRecentMonsters(4);
 $dolls = new Doll();
 $recentDolls = $dolls->getRecentDolls(4);
 
+// Create a combined array of all recent activities
+$recentActivities = [];
+
+// Simulate database activities - in a real application, this would come from an activity log table
+// For now, let's create some sample activities using our real data
+$activityTypes = ['added', 'updated', 'removed'];
+
+// Add weapons to the activity feed
+foreach (array_slice($recentWeapons, 0, 1) as $item) {
+    $recentActivities[] = [
+        'type' => $activityTypes[0], // Added
+        'item_type' => 'weapon',
+        'item_name' => $item['desc_en'],
+        'image' => $weapons->getWeaponIconUrl($item['iconId']),
+        'timestamp' => date('Y-m-d H:i:s', strtotime('-1 hour')),
+    ];
+}
+
+// Add armor to the activity feed
+foreach (array_slice($recentArmor, 0, 1) as $item) {
+    $recentActivities[] = [
+        'type' => $activityTypes[1], // Updated
+        'item_type' => 'armor',
+        'item_name' => $item['desc_en'],
+        'image' => $armor->getArmorIconUrl($item['iconId']),
+        'timestamp' => date('Y-m-d H:i:s', strtotime('-3 hours')),
+    ];
+}
+
+// Add items to the activity feed
+foreach (array_slice($recentItems, 0, 1) as $item) {
+    $recentActivities[] = [
+        'type' => $activityTypes[0], // Added
+        'item_type' => 'item',
+        'item_name' => $item['desc_en'],
+        'image' => $items->getItemIconUrl($item['iconId']),
+        'timestamp' => date('Y-m-d H:i:s', strtotime('-5 hours')),
+    ];
+}
+
+// Add maps to the activity feed
+foreach (array_slice($recentMaps, 0, 1) as $item) {
+    $recentActivities[] = [
+        'type' => $activityTypes[2], // Removed
+        'item_type' => 'map',
+        'item_name' => $item['locationname'],
+        'image' => $maps->getMapImageUrl($item['pngId']),
+        'timestamp' => date('Y-m-d H:i:s', strtotime('-8 hours')),
+    ];
+}
+
+// Add monsters to the activity feed
+foreach (array_slice($recentMonsters, 0, 1) as $item) {
+    $recentActivities[] = [
+        'type' => $activityTypes[1], // Updated
+        'item_type' => 'monster',
+        'item_name' => $item['desc_en'],
+        'image' => $monster->getMonsterSpriteUrl($item['spriteId']),
+        'timestamp' => date('Y-m-d H:i:s', strtotime('-10 hours')),
+    ];
+}
+
+// Sort the activities by timestamp (most recent first)
+usort($recentActivities, function($a, $b) {
+    return strtotime($b['timestamp']) - strtotime($a['timestamp']);
+});
+
+// Limit to only 5 most recent activities
+$recentActivities = array_slice($recentActivities, 0, 5);
+
 // Include header
 include 'includes/header.php';
 
@@ -47,6 +117,44 @@ include 'includes/hero.php';
 
 <!-- Main Content -->
 <main>
+    <!-- Recent Activity Section - Now positioned above categories -->
+    <section class="section activity-section">
+        <div class="container">
+            <h2 class="section-title">Recent Database Activity</h2>
+            
+            <div class="activity-feed">
+                <?php foreach ($recentActivities as $activity): ?>
+                <div class="activity-item activity-<?php echo $activity['type']; ?>">
+                    <div class="activity-icon">
+                        <img src="<?php echo $activity['image']; ?>" alt="<?php echo htmlspecialchars($activity['item_name']); ?>">
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-header">
+                            <span class="activity-type"><?php echo ucfirst($activity['type']); ?></span>
+                            <span class="activity-time"><?php echo timeAgo($activity['timestamp']); ?></span>
+                        </div>
+                        <div class="activity-message">
+                            <?php 
+                            switch($activity['type']) {
+                                case 'added':
+                                    echo 'New ' . ucfirst($activity['item_type']) . ' added: <strong>' . htmlspecialchars($activity['item_name']) . '</strong>';
+                                    break;
+                                case 'updated':
+                                    echo ucfirst($activity['item_type']) . ' updated: <strong>' . htmlspecialchars($activity['item_name']) . '</strong>';
+                                    break;
+                                case 'removed':
+                                    echo ucfirst($activity['item_type']) . ' removed: <strong>' . htmlspecialchars($activity['item_name']) . '</strong>';
+                                    break;
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+
     <!-- Categories Section -->
     <section class="section">
         <div class="container">
@@ -181,171 +289,31 @@ include 'includes/hero.php';
             </div>
         </div>
     </section>
-    
-    <!-- Recent Additions Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">Recent Additions</h2>
-            
-            <!-- Recent Weapons -->
-            <div class="recent-list">
-                <h3 class="recent-list-title">Weapons</h3>
-                
-                <?php foreach ($recentWeapons as $weapon): ?>
-                <div class="recent-list-item">
-                    <img src="<?php echo $weapons->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars($weapon['desc_en']); ?>" class="recent-list-img">
-                    <div class="recent-list-info">
-                        <h4 class="recent-list-name"><?php echo htmlspecialchars($weapon['desc_en']); ?></h4>
-                        <div class="recent-list-meta">
-                            <span class="recent-list-type"><?php echo $weapon['type']; ?></span>
-                            <span class="recent-list-grade"><?php echo $weapon['itemGrade']; ?> Grade</span>
-                        </div>
-                        <div class="recent-list-subtitle"><?php echo htmlspecialchars($weapon['desc_kr']); ?></div>
-                    </div>
-                    <div class="recent-list-actions">
-                        <a href="public/weapons/detail.php?id=<?php echo $weapon['item_id']; ?>" class="recent-list-link">Details <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                
-                <div class="recent-list-footer">
-                    <a href="public/weapons/index.php" class="recent-list-more">View All Weapons</a>
-                </div>
-            </div>
-            
-            <!-- Recent Armor -->
-            <div class="recent-list">
-                <h3 class="recent-list-title">Armor</h3>
-                
-                <?php foreach ($recentArmor as $armorItem): ?>
-                <div class="recent-list-item">
-                    <img src="<?php echo $armor->getArmorIconUrl($armorItem['iconId']); ?>" alt="<?php echo htmlspecialchars($armorItem['desc_en']); ?>" class="recent-list-img">
-                    <div class="recent-list-info">
-                        <h4 class="recent-list-name"><?php echo htmlspecialchars($armorItem['desc_en']); ?></h4>
-                        <div class="recent-list-meta">
-                            <span class="recent-list-type"><?php echo $armorItem['type']; ?></span>
-                            <span class="recent-list-grade"><?php echo $armorItem['itemGrade']; ?> Grade</span>
-                        </div>
-                        <div class="recent-list-subtitle"><?php echo htmlspecialchars($armorItem['desc_kr']); ?></div>
-                    </div>
-                    <div class="recent-list-actions">
-                        <a href="public/armor/detail.php?id=<?php echo $armorItem['item_id']; ?>" class="recent-list-link">Details <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                
-                <div class="recent-list-footer">
-                    <a href="public/armor/index.php" class="recent-list-more">View All Armor</a>
-                </div>
-            </div>
-            
-            <!-- Recent Items -->
-            <div class="recent-list">
-                <h3 class="recent-list-title">Items</h3>
-                
-                <?php foreach ($recentItems as $item): ?>
-                <div class="recent-list-item">
-                    <img src="<?php echo $items->getItemIconUrl($item['iconId']); ?>" alt="<?php echo htmlspecialchars($item['desc_en']); ?>" class="recent-list-img">
-                    <div class="recent-list-info">
-                        <h4 class="recent-list-name"><?php echo htmlspecialchars($item['desc_en']); ?></h4>
-                        <div class="recent-list-meta">
-                            <span class="recent-list-type"><?php echo $item['item_type']; ?></span>
-                            <span class="recent-list-grade"><?php echo $item['itemGrade']; ?> Grade</span>
-                        </div>
-                        <div class="recent-list-subtitle"><?php echo htmlspecialchars($item['desc_kr']); ?></div>
-                    </div>
-                    <div class="recent-list-actions">
-                        <a href="public/items/detail.php?id=<?php echo $item['item_id']; ?>" class="recent-list-link">Details <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                
-                <div class="recent-list-footer">
-                    <a href="public/items/index.php" class="recent-list-more">View All Items</a>
-                </div>
-            </div>
-            
-            <!-- Recent Maps -->
-            <div class="recent-list">
-                <h3 class="recent-list-title">Maps</h3>
-                
-                <?php foreach ($recentMaps as $map): ?>
-                <div class="recent-list-item">
-                    <img src="<?php echo $maps->getMapImageUrl($map['pngId']); ?>" alt="<?php echo htmlspecialchars($map['locationname']); ?>" class="recent-list-img">
-                    <div class="recent-list-info">
-                        <h4 class="recent-list-name"><?php echo htmlspecialchars($map['locationname']); ?></h4>
-                        <div class="recent-list-meta">
-                            <span class="recent-list-type">Map ID: <?php echo $map['mapid']; ?></span>
-                        </div>
-                        <div class="recent-list-subtitle"><?php echo htmlspecialchars($map['desc_kr']); ?></div>
-                    </div>
-                    <div class="recent-list-actions">
-                        <a href="public/maps/detail.php?id=<?php echo $map['mapid']; ?>" class="recent-list-link">Details <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                
-                <div class="recent-list-footer">
-                    <a href="public/maps/index.php" class="recent-list-more">View All Maps</a>
-                </div>
-            </div>
-            
-            <!-- Recent Monsters -->
-            <div class="recent-list">
-                <h3 class="recent-list-title">Monsters</h3>
-                
-                <?php foreach ($recentMonsters as $monster_item): ?>
-                <div class="recent-list-item">
-                    <img src="<?php echo $monster->getMonsterSpriteUrl($monster_item['spriteId']); ?>" alt="<?php echo htmlspecialchars($monster_item['desc_en']); ?>" class="recent-list-img">
-                    <div class="recent-list-info">
-                        <h4 class="recent-list-name"><?php echo htmlspecialchars($monster_item['desc_en']); ?></h4>
-                        <div class="recent-list-meta">
-                            <span class="recent-list-type">Level: <?php echo $monster_item['lvl']; ?></span>
-                            <span class="recent-list-grade">HP: <?php echo $monster_item['hp']; ?></span>
-                        </div>
-                        <div class="recent-list-subtitle"><?php echo htmlspecialchars($monster_item['desc_kr']); ?></div>
-                    </div>
-                    <div class="recent-list-actions">
-                        <a href="public/monsters/detail.php?id=<?php echo $monster_item['npcid']; ?>" class="recent-list-link">Details <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                
-                <div class="recent-list-footer">
-                    <a href="public/monsters/index.php" class="recent-list-more">View All Monsters</a>
-                </div>
-            </div>
-            
-            <!-- Recent Dolls -->
-            <div class="recent-list">
-                <h3 class="recent-list-title">Dolls</h3>
-                
-                <?php foreach ($recentDolls as $doll): ?>
-                <div class="recent-list-item">
-                    <img src="<?php echo $dolls->getDollIconUrl($doll['iconId']); ?>" alt="<?php echo htmlspecialchars($doll['desc_en']); ?>" class="recent-list-img">
-                    <div class="recent-list-info">
-                        <h4 class="recent-list-name"><?php echo htmlspecialchars($doll['desc_en']); ?></h4>
-                        <div class="recent-list-meta">
-                            <span class="recent-list-type">Min Level: <?php echo $doll['min_lvl']; ?></span>
-                            <span class="recent-list-grade"><?php echo $doll['itemGrade']; ?> Grade</span>
-                        </div>
-                        <div class="recent-list-subtitle"><?php echo htmlspecialchars($doll['desc_kr']); ?></div>
-                    </div>
-                    <div class="recent-list-actions">
-                        <a href="public/dolls/detail.php?id=<?php echo $doll['item_id']; ?>" class="recent-list-link">Details <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                
-                <div class="recent-list-footer">
-                    <a href="public/dolls/index.php" class="recent-list-more">View All Dolls</a>
-                </div>
-            </div>
-        </div>
-    </section>
 </main>
 
 <?php
+// Helper function to show time ago format
+function timeAgo($timestamp) {
+    $time = strtotime($timestamp);
+    $now = time();
+    $diff = $now - $time;
+    
+    if ($diff < 60) {
+        return "Just now";
+    } elseif ($diff < 3600) {
+        $mins = round($diff / 60);
+        return $mins . " minute" . ($mins > 1 ? "s" : "") . " ago";
+    } elseif ($diff < 86400) {
+        $hours = round($diff / 3600);
+        return $hours . " hour" . ($hours > 1 ? "s" : "") . " ago";
+    } elseif ($diff < 604800) {
+        $days = round($diff / 86400);
+        return $days . " day" . ($days > 1 ? "s" : "") . " ago";
+    } else {
+        return date("M j, Y", $time);
+    }
+}
+
 // Include footer
 include 'includes/footer.php';
 ?>

@@ -19,6 +19,13 @@ if ($user->isLoggedIn()) {
 
 // Handle login form submission
 $error = '';
+$success = '';
+
+// Check if there was a logout
+if (isset($_GET['logout']) && $_GET['logout'] == 'success') {
+    $success = 'You have been successfully logged out.';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = isset($_POST['username']) ? trim($_POST['username']) : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
@@ -52,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="login-card">
             <div class="login-header">
                 <div class="login-logo">
-                    <img src="../assets/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo">
+                    <img src="../assets/img/favicon/favicon.ico" alt="<?php echo SITE_NAME; ?> Logo">
                 </div>
                 <h1 class="login-title">Admin Login</h1>
                 <p class="login-subtitle">Enter your credentials to access the admin dashboard</p>
@@ -62,6 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (!empty($error)): ?>
                 <div class="login-error">
                     <p><?php echo $error; ?></p>
+                </div>
+                <?php endif; ?>
+                
+                <?php if (!empty($success)): ?>
+                <div class="login-success">
+                    <p><?php echo $success; ?></p>
                 </div>
                 <?php endif; ?>
                 
@@ -81,7 +94,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 
-                <button type="submit" class="login-button">Login</button>
+                <button type="submit" class="login-button">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
             </form>
             
             <div class="login-footer">
