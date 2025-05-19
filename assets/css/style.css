@@ -865,11 +865,25 @@ a:hover {
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* Layout for image card and stats */
+/* Layout for image card and stats - Two column layout */
 .detail-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-lg);
+}
+
+/* Three column layout for stats cards */
+.detail-three-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+/* Single column layout for stats in cards */
+.detail-stats.single-column {
+    display: flex;
+    flex-direction: column;
+    max-height: none;
 }
 
 /* Image card styles */
@@ -889,7 +903,6 @@ a:hover {
     justify-content: center;
     align-items: center;
     padding: var(--spacing-lg);
-    background-color: rgba(0, 0, 0, 0.2);
     border-radius: var(--border-radius);
     margin-top: var(--spacing-md);
     flex: 1;
@@ -897,7 +910,7 @@ a:hover {
 
 .detail-img {
     max-width: 100%;
-    max-height: 200px;
+    max-height: 300px;
     object-fit: contain;
 }
 
@@ -909,6 +922,8 @@ a:hover {
     box-shadow: var(--card-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .detail-stats {
@@ -917,6 +932,7 @@ a:hover {
     gap: var(--spacing-lg);
     max-height: 500px;
     overflow-y: auto;
+    flex: 1;
 }
 
 .detail-stat-group {
@@ -1260,6 +1276,10 @@ a:hover {
     
     /* Responsive layout for detail page */
     .detail-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-three-column-layout {
         grid-template-columns: 1fr;
     }
     
