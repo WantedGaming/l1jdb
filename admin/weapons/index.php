@@ -70,9 +70,12 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
     
     if ($weapon) {
         if ($weaponsModel->deleteWeapon($weaponId)) {
-            // Log activity
+            // Get current user data
+            $currentUser = $user->getCurrentUser();
+            
+            // Log activity with null-safe username
             $user->logActivity(
-                $currentUser['login'],
+                $currentUser ? $currentUser['login'] : null,
                 'delete',
                 "Deleted weapon: {$weapon['desc_en']} (ID: $weaponId)",
                 'weapon',
@@ -117,6 +120,24 @@ include '../../includes/admin-header.php';
             <?php if (isset($errorMessage)): ?>
             <div class="admin-alert admin-alert-danger">
                 <?php echo $errorMessage; ?>
+            </div>
+            <?php endif; ?>
+            
+            <?php if (isset($_GET['deleted']) && $_GET['deleted'] == 1): ?>
+            <div class="admin-alert admin-alert-success">
+                Weapon has been deleted successfully.
+            </div>
+            <?php endif; ?>
+            
+            <?php if (isset($_GET['created']) && $_GET['created'] == 1): ?>
+            <div class="admin-alert admin-alert-success">
+                New weapon has been created successfully.
+            </div>
+            <?php endif; ?>
+            
+            <?php if (isset($_GET['updated']) && $_GET['updated'] == 1): ?>
+            <div class="admin-alert admin-alert-success">
+                Weapon has been updated successfully.
             </div>
             <?php endif; ?>
             
@@ -216,12 +237,9 @@ include '../../includes/admin-header.php';
                                     <a href="edit.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="index.php" method="post" class="admin-delete-form" onsubmit="return confirm('Are you sure you want to delete this weapon?');">
-                                        <input type="hidden" name="id" value="<?php echo $weapon['item_id']; ?>">
-                                        <button type="submit" name="delete" class="admin-button admin-button-danger" title="Delete">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
+                                    <a href="delete.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-danger" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

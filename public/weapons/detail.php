@@ -50,6 +50,17 @@ include '../../includes/hero.php';
 <main>
     <section class="detail-section">
         <div class="container">
+				<?php if (isset($_GET['updated']) && $_GET['updated'] == 1): ?>
+				<div class="admin-alert admin-alert-success">
+					Weapon has been updated successfully.
+				</div>
+				<?php endif; ?>
+
+				<?php if (isset($_GET['created']) && $_GET['created'] == 1): ?>
+				<div class="admin-alert admin-alert-success">
+					New weapon has been created successfully.
+				</div>
+				<?php endif; ?>
             <div class="detail-container">
                 <!-- Title Card -->
                 <div class="detail-title-card">

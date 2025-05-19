@@ -84,4 +84,8 @@ if (!isset($pageTitle)) {
                 </div>
             </nav>
         </div>
+		
+		<!-- Admin Scripts -->
+		<script src="<?php echo SITE_URL; ?>/assets/js/error-monitor.js"></script>
+		
     </header>

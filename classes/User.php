@@ -90,6 +90,15 @@ class User {
     
     // Log admin activity
     public function logActivity($username, $activityType, $description, $entityType = null, $entityId = null) {
+        // Handle null username by using session data or fallback
+        if ($username === null) {
+            if (isset($_SESSION['user']) && isset($_SESSION['user']['login'])) {
+                $username = $_SESSION['user']['login'];
+            } else {
+                $username = 'system'; // Fallback value
+            }
+        }
+        
         $data = [
             'admin_username' => $username,
             'activity_type' => $activityType,
@@ -97,7 +106,7 @@ class User {
             'entity_type' => $entityType,
             'entity_id' => $entityId,
             'ip_address' => $_SERVER['REMOTE_ADDR'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
             'timestamp' => date('Y-m-d H:i:s')
         ];
         

@@ -32,6 +32,10 @@ define('DISPLAY_ERRORS', true); // Set to false in production
 // Set timezone
 date_default_timezone_set('UTC');
 
+// config/config.php - Add this with your other configuration constants
+define('DEV_MODE', true); // Set to false in production
+define('ERROR_MONITOR_ENABLED', DEV_MODE); // Enable error monitoring in development
+
 // Categories
 define('CATEGORIES', [
     'weapons' => 'Weapons',
