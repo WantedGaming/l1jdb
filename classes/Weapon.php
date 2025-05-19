@@ -199,4 +199,30 @@ class Weapon {
         
         return isset($mapping[$resistName]) ? $mapping[$resistName] : ucfirst(str_replace('_', ' ', $resistName));
     }
+	
+	// Get monsters that drop this weapon
+	public function getWeaponDrops($weaponId) {
+		$sql = "SELECT d.mobId, d.mobname_en, d.moblevel, d.min, d.max, 
+					  d.chance, d.Enchant, n.spriteId, n.lvl, n.hp, 
+					  n.is_bossmonster  
+			   FROM droplist d
+			   JOIN npc n ON d.mobId = n.npcid 
+			   WHERE d.itemId = ? 
+			   ORDER BY d.chance DESC, n.lvl DESC";
+		return $this->db->fetchAll($sql, [$weaponId]);
+	}
+
+	// Get monster sprite URL with PNG fallback to GIF
+	public function getMonsterSpriteUrl($spriteId) {
+		$pngPath = 'assets/img/icons/ms' . $spriteId . '.png';
+		$gifPath = 'assets/img/icons/ms' . $spriteId . '.gif';
+		
+		// Check if PNG exists first
+		if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $pngPath)) {
+			return SITE_URL . '/' . $pngPath;
+		}
+		
+		// Fall back to GIF
+		return SITE_URL . '/' . $gifPath;
+	}
 } // This is the closing brace of the class

@@ -1251,6 +1251,132 @@ a:hover {
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* Item Properties Styles */
+.detail-properties {
+    padding: var(--spacing-md) 0;
+}
+
+.detail-property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.detail-property {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    background-color: rgba(255, 255, 255, 0.03);
+    transition: background-color var(--transition-speed);
+}
+
+.detail-property.property-active {
+    background-color: rgba(249, 75, 31, 0.1);
+    border-left: 3px solid var(--accent);
+}
+
+.property-checkbox {
+    margin-right: var(--spacing-md);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.1rem;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.property-active .property-checkbox {
+    color: var(--accent);
+}
+
+.property-name {
+    font-weight: 500;
+}
+
+.property-active .property-name {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Drop Table Styles */
+.monster-drop-table {
+    overflow-x: auto;
+    margin-top: var(--spacing-md);
+    border-radius: var(--border-radius);
+}
+
+.drop-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.drop-table th {
+    background-color: var(--primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.drop-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+}
+
+.drop-table tr {
+    background-color: var(--secondary);
+    transition: background-color var(--transition-speed);
+}
+
+.drop-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.drop-row-boss {
+    background-color: rgba(249, 75, 31, 0.05);
+}
+
+.drop-row-boss:hover {
+    background-color: rgba(249, 75, 31, 0.1) !important;
+}
+
+.monster-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.monster-sprite {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.monster-name {
+    font-weight: 500;
+}
+
+.boss-tag {
+    font-size: 0.7rem;
+    background-color: var(--accent);
+    color: white;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-left: var(--spacing-sm);
+}
+
+.drop-table-chance {
+    color: var(--accent);
+    font-weight: 500;
+}
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
     .hero-title {
@@ -1399,6 +1525,15 @@ a:hover {
     .filter-form-inline .filter-button,
     .filter-form-inline .filter-reset {
         width: 100%;
+    }
+    
+    .detail-property-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .drop-table th:nth-child(2),
+    .drop-table td:nth-child(2) {
+        display: none;
     }
 }
 

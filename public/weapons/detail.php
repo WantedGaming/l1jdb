@@ -133,9 +133,6 @@ include '../../includes/hero.php';
                             <?php endif; ?>
                             
                             <?php if (isset($weapon['trade']) && $weapon['trade'] > 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">Tradeable</span>
-                                <span class="detail-stat-value"><?php echo $weapon['trade'] == 1 ? 'Yes' : 'No'; ?></span>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -363,6 +360,54 @@ include '../../includes/hero.php';
                     </div>
                 </div>
                 
+                <!-- Item Properties -->
+                <div class="detail-stats-card">
+                    <h3 class="detail-stat-title">Item Properties</h3>
+                    <div class="detail-properties">
+                        <div class="detail-property-grid">
+                            <div class="detail-property <?php echo isset($weapon['haste_item']) && $weapon['haste_item'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['haste_item']) && $weapon['haste_item'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Haste</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['canbedmg']) && $weapon['canbedmg'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['canbedmg']) && $weapon['canbedmg'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Damageable</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['bless']) && $weapon['bless'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['bless']) && $weapon['bless'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Blessed</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['trade']) && $weapon['trade'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['trade']) && $weapon['trade'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Can Not Trade</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['retrieve']) && $weapon['retrieve'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['retrieve']) && $weapon['retrieve'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Can Not Store</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['specialretrieve']) && $weapon['specialretrieve'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['specialretrieve']) && $weapon['specialretrieve'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Can Not Store Special</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['cant_delete']) && $weapon['cant_delete'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['cant_delete']) && $weapon['cant_delete'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Can Not Delete</span>
+                            </div>
+                            
+                            <div class="detail-property <?php echo isset($weapon['cant_sell']) && $weapon['cant_sell'] > 0 ? 'property-active' : ''; ?>">
+                                <span class="property-checkbox"><i class="fas <?php echo isset($weapon['cant_sell']) && $weapon['cant_sell'] > 0 ? 'fa-check-square' : 'fa-square'; ?>"></i></span>
+                                <span class="property-name">Can Not Sell</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <?php if (isset($weapon['PVPDamage']) || isset($weapon['PVPDamageReduction'])): ?>
                 <!-- PVP Stats Section -->
                 <div class="detail-stats-card">
@@ -565,13 +610,53 @@ include '../../includes/hero.php';
                     </div>
                 </div>
                 
-                <!-- Monsters Dropped By (placeholder) -->
+                <!-- Monsters Dropped By -->
                 <div class="detail-drops-section">
-                    <h3 class="detail-stat-title">Dropped By</h3>
-                    <div class="detail-drops-content">
-                        <p class="detail-placeholder-text">This information will be updated soon.</p>
-                    </div>
-                </div>
+					<h3 class="detail-stat-title">Dropped By</h3>
+					<?php
+					$drops = $weaponsModel->getWeaponDrops($weaponId);
+					
+					if (empty($drops)):
+					?>
+					<div class="detail-drops-content">
+						<p class="detail-placeholder-text">This weapon is not dropped by any monsters.</p>
+					</div>
+					<?php else: ?>
+					<div class="monster-drop-table">
+						<table class="drop-table">
+							<thead>
+								<tr>
+									<th class="drop-table-monster">Monster</th>
+									<th class="drop-table-level">Level</th>
+									<th class="drop-table-chance">Drop Rate</th>
+									<th class="drop-table-amount">Amount</th>
+									<?php if (array_filter($drops, function($d) { return $d['Enchant'] > 0; })): ?>
+									<th class="drop-table-enchant">Enchant</th>
+									<?php endif; ?>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ($drops as $drop): ?>
+								<tr class="<?php echo $drop['is_bossmonster'] == 'true' ? 'drop-row-boss' : ''; ?>">
+									<td class="drop-table-monster">
+										<div class="monster-info">
+											<img src="<?php echo $weaponsModel->getMonsterSpriteUrl($drop['spriteId']); ?>" alt="<?php echo htmlspecialchars($drop['mobname_en']); ?>" class="monster-sprite">
+											<span class="monster-name"><?php echo htmlspecialchars($drop['mobname_en']); ?><?php echo $drop['is_bossmonster'] == 'true' ? ' <span class="boss-tag">Boss</span>' : ''; ?></span>
+										</div>
+									</td>
+									<td class="drop-table-level"><?php echo $drop['lvl']; ?></td>
+									<td class="drop-table-chance"><?php echo number_format($drop['chance'] / 1000, 2); ?>%</td>
+									<td class="drop-table-amount"><?php echo $drop['min'] == $drop['max'] ? $drop['min'] : $drop['min'] . '-' . $drop['max']; ?></td>
+									<?php if (array_filter($drops, function($d) { return $d['Enchant'] > 0; })): ?>
+									<td class="drop-table-enchant"><?php echo $drop['Enchant'] > 0 ? '+' . $drop['Enchant'] : '-'; ?></td>
+									<?php endif; ?>
+								</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+					<?php endif; ?>
+				</div>
                 
                 <!-- Crafting Section (conditional display) -->
                 <?php if (false): /* Replace with actual condition when crafting data is available */ ?>
