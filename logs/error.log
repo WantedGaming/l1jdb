@@ -139,3 +139,13 @@
 2025-05-18 10:03:55 Error: [2] Undefined variable $currentUser in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
 2025-05-18 10:03:55 Error: [2] Trying to access array offset on value of type null in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
 2025-05-18 10:03:55 Error: [8192] htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\l1jdb\includes\header.php on line 66
+2025-05-19 16:42:13 Error: [2] include_once(C:\xampp\htdocs\l1jdb\public\crafts/../includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 167
+2025-05-19 16:42:13 Error: [2] include_once(): Failed opening 'C:\xampp\htdocs\l1jdb\public\crafts/../includes/header.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 167
+2025-05-19 16:42:13 Error: [2] file_get_contents(C:\xampp\htdocs\l1jdb\public\crafts/../assets/css/crafting.css): Failed to open stream: No such file or directory in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 170
+2025-05-19 16:42:13 Error: [2] include_once(C:\xampp\htdocs\l1jdb\public\crafts/../includes/footer.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 344
+2025-05-19 16:42:13 Error: [2] include_once(): Failed opening 'C:\xampp\htdocs\l1jdb\public\crafts/../includes/footer.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 344
+2025-05-19 16:42:27 Error: [2] include_once(C:\xampp\htdocs\l1jdb\public\crafts/../includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 167
+2025-05-19 16:42:27 Error: [2] include_once(): Failed opening 'C:\xampp\htdocs\l1jdb\public\crafts/../includes/header.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 167
+2025-05-19 16:42:27 Error: [2] file_get_contents(C:\xampp\htdocs\l1jdb\public\crafts/../assets/css/crafting.css): Failed to open stream: No such file or directory in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 170
+2025-05-19 16:42:27 Error: [2] include_once(C:\xampp\htdocs\l1jdb\public\crafts/../includes/footer.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 344
+2025-05-19 16:42:27 Error: [2] include_once(): Failed opening 'C:\xampp\htdocs\l1jdb\public\crafts/../includes/footer.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\l1jdb\public\crafts\craft_list.php on line 344
