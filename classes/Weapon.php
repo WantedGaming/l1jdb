@@ -214,8 +214,8 @@ class Weapon {
 
 	// Get monster sprite URL with PNG fallback to GIF
 	public function getMonsterSpriteUrl($spriteId) {
-		$pngPath = 'assets/img/icons/ms' . $spriteId . '.png';
-		$gifPath = 'assets/img/icons/ms' . $spriteId . '.gif';
+		$pngPath = '/assets/img/icons/ms' . $spriteId . '.png';
+		$gifPath = '/assets/img/icons/ms' . $spriteId . '.gif';
 		
 		// Check if PNG exists first
 		if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $pngPath)) {
