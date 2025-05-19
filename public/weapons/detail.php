@@ -35,7 +35,7 @@ $pageTitle = cleanItemName($weapon['desc_en']) . ' - Weapon Details';
 
 // Include header
 $heroTitle = cleanItemName($weapon['desc_en']);
-$heroSubtitle = $weapon['desc_kr'];
+$heroSubtitle = $weapon['type'];
 include '../../includes/header.php';
 include '../../includes/hero.php';
 ?>
