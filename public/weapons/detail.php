@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../classes/User.php';
 require_once __DIR__ . '/../../classes/Weapon.php';
-require_once __DIR__ . '/../../includes/functions.php'; // Add this line to include our helper functions
+require_once __DIR__ . '/../../includes/functions.php';
 
 // Initialize session
 init_session();
@@ -27,8 +27,14 @@ if (!$weapon) {
     exit;
 }
 
+// Get full weapon stats
+$weaponAllStats = $weaponsModel->getWeaponAllStats($weaponId);
+
 // Get weapon skills
 $weaponSkills = $weaponsModel->getWeaponSkills($weaponId);
+
+// Get additional damage info
+$weaponDamage = $weaponsModel->getWeaponDamage($weaponId);
 
 // Set page title
 $pageTitle = cleanItemName($weapon['desc_en']) . ' - Weapon Details';
@@ -97,6 +103,41 @@ include '../../includes/hero.php';
                                 <span class="detail-stat-label">Grade</span>
                                 <span class="detail-stat-value"><?php echo $weapon['itemGrade']; ?></span>
                             </div>
+                            
+                            <?php if (isset($weapon['safenchant']) && $weapon['safenchant'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Safe Enchant</span>
+                                <span class="detail-stat-value">+<?php echo $weapon['safenchant']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($weapon['min_lvl']) && $weapon['min_lvl'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Min Level</span>
+                                <span class="detail-stat-value"><?php echo $weapon['min_lvl']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($weapon['max_lvl']) && $weapon['max_lvl'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Max Level</span>
+                                <span class="detail-stat-value"><?php echo $weapon['max_lvl']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($weapon['bless']) && $weapon['bless'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Blessed</span>
+                                <span class="detail-stat-value"><?php echo $weapon['bless'] == 1 ? 'Yes' : 'No'; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($weapon['trade']) && $weapon['trade'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Tradeable</span>
+                                <span class="detail-stat-value"><?php echo $weapon['trade'] == 1 ? 'Yes' : 'No'; ?></span>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -127,6 +168,13 @@ include '../../includes/hero.php';
                                 <span class="detail-stat-value"><?php echo $weapon['dmgmodifier']; ?></span>
                             </div>
                             
+                            <?php if (isset($weaponDamage['addDamege']) && $weaponDamage['addDamege'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Additional Damage</span>
+                                <span class="detail-stat-value">+<?php echo $weaponDamage['addDamege']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
                             <?php if (isset($weapon['double_dmg_chance']) && $weapon['double_dmg_chance'] > 0): ?>
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Double Damage Chance</span>
@@ -134,10 +182,17 @@ include '../../includes/hero.php';
                             </div>
                             <?php endif; ?>
                             
-                            <?php if (isset($weapon['magicdmgmodifier']) && $weapon['magicdmgmodifier'] > 0): ?>
+                            <?php if (isset($weapon['magicdmgmodifier']) && $weapon['magicdmgmodifier'] != 0): ?>
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Magic Damage Modifier</span>
                                 <span class="detail-stat-value"><?php echo $weapon['magicdmgmodifier']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($weapon['canbedmg']) && $weapon['canbedmg'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Can Be Damaged</span>
+                                <span class="detail-stat-value"><?php echo $weapon['canbedmg'] == 1 ? 'Yes' : 'No'; ?></span>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -147,49 +202,24 @@ include '../../includes/hero.php';
                     <div class="detail-stats-card">
                         <h3 class="detail-stat-title">Stats Bonus</h3>
                         <div class="detail-stats single-column">
-                            <?php if ($weapon['add_str'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">STR</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_str'] > 0 ? '+' . $weapon['add_str'] : $weapon['add_str']; ?></span>
-                            </div>
-                            <?php endif; ?>
+                            <?php 
+                            $hasStatBonus = false;
+                            $statBonuses = ['add_str', 'add_con', 'add_dex', 'add_int', 'add_wis', 'add_cha'];
+                            foreach ($statBonuses as $statBonus) {
+                                if (isset($weapon[$statBonus]) && $weapon[$statBonus] != 0) {
+                                    $hasStatBonus = true;
+                                    $statName = strtoupper(str_replace('add_', '', $statBonus));
+                                    ?>
+                                    <div class="detail-stat">
+                                        <span class="detail-stat-label"><?php echo $statName; ?></span>
+                                        <span class="detail-stat-value"><?php echo $weapon[$statBonus] > 0 ? '+' . $weapon[$statBonus] : $weapon[$statBonus]; ?></span>
+                                    </div>
+                                    <?php
+                                }
+                            }
                             
-                            <?php if ($weapon['add_con'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">CON</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_con'] > 0 ? '+' . $weapon['add_con'] : $weapon['add_con']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_dex'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">DEX</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_dex'] > 0 ? '+' . $weapon['add_dex'] : $weapon['add_dex']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_int'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">INT</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_int'] > 0 ? '+' . $weapon['add_int'] : $weapon['add_int']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_wis'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">WIS</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_wis'] > 0 ? '+' . $weapon['add_wis'] : $weapon['add_wis']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_cha'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">CHA</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_cha'] > 0 ? '+' . $weapon['add_cha'] : $weapon['add_cha']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_str'] == 0 && $weapon['add_con'] == 0 && $weapon['add_dex'] == 0 && $weapon['add_int'] == 0 && $weapon['add_wis'] == 0 && $weapon['add_cha'] == 0): ?>
+                            if (!$hasStatBonus): 
+                            ?>
                             <div class="detail-stat">
                                 <span class="detail-stat-label">No Bonuses</span>
                                 <span class="detail-stat-value">—</span>
@@ -202,49 +232,32 @@ include '../../includes/hero.php';
                     <div class="detail-stats-card">
                         <h3 class="detail-stat-title">Additional Stats</h3>
                         <div class="detail-stats single-column">
-                            <?php if ($weapon['add_hp'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">HP</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_hp'] > 0 ? '+' . $weapon['add_hp'] : $weapon['add_hp']; ?></span>
-                            </div>
-                            <?php endif; ?>
+                            <?php 
+                            $hasAdditionalStats = false;
+                            $additionalStats = ['add_hp', 'add_mp', 'add_hpr', 'add_mpr', 'add_sp', 'm_def'];
+                            foreach ($additionalStats as $additionalStat) {
+                                if (isset($weapon[$additionalStat]) && $weapon[$additionalStat] != 0) {
+                                    $hasAdditionalStats = true;
+                                    $statLabel = '';
+                                    switch($additionalStat) {
+                                        case 'add_hp': $statLabel = 'HP'; break;
+                                        case 'add_mp': $statLabel = 'MP'; break;
+                                        case 'add_hpr': $statLabel = 'HP Regen'; break;
+                                        case 'add_mpr': $statLabel = 'MP Regen'; break;
+                                        case 'add_sp': $statLabel = 'Spell Power'; break;
+                                        case 'm_def': $statLabel = 'Magic Defense'; break;
+                                    }
+                                    ?>
+                                    <div class="detail-stat">
+                                        <span class="detail-stat-label"><?php echo $statLabel; ?></span>
+                                        <span class="detail-stat-value"><?php echo $weapon[$additionalStat] > 0 ? '+' . $weapon[$additionalStat] : $weapon[$additionalStat]; ?></span>
+                                    </div>
+                                    <?php
+                                }
+                            }
                             
-                            <?php if ($weapon['add_mp'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">MP</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_mp'] > 0 ? '+' . $weapon['add_mp'] : $weapon['add_mp']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_hpr'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">HP Regen</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_hpr'] > 0 ? '+' . $weapon['add_hpr'] : $weapon['add_hpr']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_mpr'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">MP Regen</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_mpr'] > 0 ? '+' . $weapon['add_mpr'] : $weapon['add_mpr']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_sp'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">Spell Power</span>
-                                <span class="detail-stat-value"><?php echo $weapon['add_sp'] > 0 ? '+' . $weapon['add_sp'] : $weapon['add_sp']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if (isset($weapon['m_def']) && $weapon['m_def'] != 0): ?>
-                            <div class="detail-stat">
-                                <span class="detail-stat-label">Magic Defense</span>
-                                <span class="detail-stat-value"><?php echo $weapon['m_def']; ?></span>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($weapon['add_hp'] == 0 && $weapon['add_mp'] == 0 && $weapon['add_hpr'] == 0 && $weapon['add_mpr'] == 0 && $weapon['add_sp'] == 0 && (!isset($weapon['m_def']) || $weapon['m_def'] == 0)): ?>
+                            if (!$hasAdditionalStats): 
+                            ?>
                             <div class="detail-stat">
                                 <span class="detail-stat-label">No Additional Stats</span>
                                 <span class="detail-stat-value">—</span>
@@ -253,6 +266,134 @@ include '../../includes/hero.php';
                         </div>
                     </div>
                 </div>
+                
+                <!-- Third Row: Criticals and Resistances -->
+                <div class="detail-layout">
+                    <!-- Critical Stats Card -->
+                    <div class="detail-stats-card">
+                        <h3 class="detail-stat-title">Critical & Combat Bonuses</h3>
+                        <div class="detail-stats single-column">
+                            <?php
+                            $hasCriticals = false;
+                            $criticalFields = [
+                                'shortCritical' => 'Melee Critical',
+                                'longCritical' => 'Ranged Critical',
+                                'magicCritical' => 'Magic Critical',
+                                'haste_item' => 'Haste',
+                                'damage_reduction' => 'Damage Reduction',
+                                'MagicDamageReduction' => 'Magic Damage Reduction',
+                                'attackSpeedDelayRate' => 'Attack Speed',
+                                'moveSpeedDelayRate' => 'Move Speed'
+                            ];
+                            
+                            foreach ($criticalFields as $field => $label) {
+                                if (isset($weapon[$field]) && $weapon[$field] != 0) {
+                                    $hasCriticals = true;
+                                    $value = $weapon[$field];
+                                    
+                                    // Special formatting for some fields
+                                    if ($field == 'attackSpeedDelayRate' || $field == 'moveSpeedDelayRate') {
+                                        $value = $value > 0 ? '+' . $value . '%' : $value . '%';
+                                    } elseif ($field == 'haste_item') {
+                                        $value = $value == 1 ? 'Yes' : 'No';
+                                    } else {
+                                        $value = $value . '%';
+                                    }
+                                    ?>
+                                    <div class="detail-stat">
+                                        <span class="detail-stat-label"><?php echo $label; ?></span>
+                                        <span class="detail-stat-value"><?php echo $value; ?></span>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                            
+                            if (!$hasCriticals): 
+                            ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">No Critical Bonuses</span>
+                                <span class="detail-stat-value">—</span>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Resistances Card -->
+                    <div class="detail-stats-card">
+                        <h3 class="detail-stat-title">Resistances & Special</h3>
+                        <div class="detail-stats single-column">
+                            <?php
+                            $hasResistances = false;
+                            $resistanceFields = [
+                                'regist_skill', 'regist_spirit', 'regist_dragon', 'regist_fear', 'regist_all',
+                                'hitup_skill', 'hitup_spirit', 'hitup_dragon', 'hitup_fear', 'hitup_all', 'hitup_magic'
+                            ];
+                            
+                            foreach ($resistanceFields as $field) {
+                                if (isset($weapon[$field]) && $weapon[$field] != 0) {
+                                    $hasResistances = true;
+                                    ?>
+                                    <div class="detail-stat">
+                                        <span class="detail-stat-label"><?php echo $weaponsModel->formatResistName($field); ?></span>
+                                        <span class="detail-stat-value"><?php echo $weapon[$field]; ?>%</span>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                            
+                            // Special field for poison resistance
+                            if (isset($weapon['poisonRegist']) && $weapon['poisonRegist'] == 'true') {
+                                $hasResistances = true;
+                                ?>
+                                <div class="detail-stat">
+                                    <span class="detail-stat-label">Poison Resistance</span>
+                                    <span class="detail-stat-value">Yes</span>
+                                </div>
+                                <?php
+                            }
+                            
+                            if (!$hasResistances): 
+                            ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">No Resistances</span>
+                                <span class="detail-stat-value">—</span>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <?php if (isset($weapon['PVPDamage']) || isset($weapon['PVPDamageReduction'])): ?>
+                <!-- PVP Stats Section -->
+                <div class="detail-stats-card">
+                    <h3 class="detail-stat-title">PVP Stats</h3>
+                    <div class="detail-stats">
+                        <?php
+                        $pvpFields = [
+                            'PVPDamage' => 'PVP Damage',
+                            'PVPDamagePercent' => 'PVP Damage %',
+                            'PVPDamageReduction' => 'PVP Damage Reduction',
+                            'PVPDamageReductionPercent' => 'PVP Damage Reduction %',
+                            'PVPMagicDamageReduction' => 'PVP Magic Damage Reduction',
+                            'PVPReductionEgnor' => 'PVP Reduction Ignore',
+                            'PVPMagicDamageReductionEgnor' => 'PVP Magic Damage Reduction Ignore',
+                            'abnormalStatusPVPDamageReduction' => 'Abnormal Status PVP Damage Reduction'
+                        ];
+                        
+                        foreach ($pvpFields as $field => $label) {
+                            if (isset($weapon[$field]) && $weapon[$field] != 0) {
+                                ?>
+                                <div class="detail-stat">
+                                    <span class="detail-stat-label"><?php echo $label; ?></span>
+                                    <span class="detail-stat-value"><?php echo $weapon[$field]; ?><?php echo strpos($field, 'Percent') !== false ? '%' : ''; ?></span>
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+                <?php endif; ?>
                 
                 <!-- Weapon Skills Section (if any) -->
                 <?php if (!empty($weaponSkills)): ?>
@@ -267,7 +408,7 @@ include '../../includes/hero.php';
                                 if ($skill['skill_id'] > 0) {
                                     echo "Skill: " . $skill['skill_id'];
                                 } else {
-                                    echo "Weapon Effect";
+                                    echo !empty($skill['note']) ? htmlspecialchars($skill['note']) : "Weapon Effect";
                                 }
                                 ?>
                             </h4>
@@ -314,9 +455,56 @@ include '../../includes/hero.php';
                                 <span class="detail-stat-value"><?php echo $skill['attr']; ?></span>
                             </div>
                             <?php endif; ?>
+                            
+                            <?php if (isset($skill['int_damage']) && $skill['int_damage'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Int-based Damage</span>
+                                <span class="detail-stat-value"><?php echo $skill['int_damage']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($skill['spell_damage']) && $skill['spell_damage'] > 0): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">Spell Damage</span>
+                                <span class="detail-stat-value"><?php echo $skill['spell_damage']; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($skill['hpStill']) && $skill['hpStill'] == 'true'): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">HP Steal</span>
+                                <span class="detail-stat-value"><?php echo $skill['hpStill_probabliity']; ?>% (<?php echo $skill['hpStillValue']; ?>)</span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($skill['mpStill']) && $skill['mpStill'] == 'true'): ?>
+                            <div class="detail-stat">
+                                <span class="detail-stat-label">MP Steal</span>
+                                <span class="detail-stat-value"><?php echo $skill['mpStill_probabliity']; ?>% (<?php echo $skill['mpStillValue']; ?>)</span>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Experience Bonus Section -->
+                <?php if (isset($weapon['expBonus']) && $weapon['expBonus'] > 0): ?>
+                <div class="detail-stats-card">
+                    <h3 class="detail-stat-title">Experience Bonus</h3>
+                    <div class="detail-stats single-column">
+                        <div class="detail-stat">
+                            <span class="detail-stat-label">EXP Bonus</span>
+                            <span class="detail-stat-value">+<?php echo $weapon['expBonus']; ?>%</span>
+                        </div>
+                        <?php if (isset($weapon['rest_exp_reduce_efficiency']) && $weapon['rest_exp_reduce_efficiency'] > 0): ?>
+                        <div class="detail-stat">
+                            <span class="detail-stat-label">Rest EXP Reduction</span>
+                            <span class="detail-stat-value"><?php echo $weapon['rest_exp_reduce_efficiency']; ?>%</span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <?php endif; ?>
                 
@@ -384,14 +572,26 @@ include '../../includes/hero.php';
                         <p class="detail-placeholder-text">This information will be updated soon.</p>
                     </div>
                 </div>
-				
-				<!-- Can be Crafted, only show if it can be crafted -->
-				<div class="detail-drops-section">
+                
+                <!-- Crafting Section (conditional display) -->
+                <?php if (false): /* Replace with actual condition when crafting data is available */ ?>
+                <div class="detail-drops-section">
                     <h3 class="detail-stat-title">Crafting</h3>
                     <div class="detail-drops-content">
-                        <p class="detail-placeholder-text">This information will be updated soon. This section should only be shown if the item can be crafted.</p>
+                        <p class="detail-placeholder-text">This information will be updated soon.</p>
                     </div>
                 </div>
+                <?php endif; ?>
+                
+                <!-- Magic Name Section -->
+                <?php if (isset($weapon['Magic_name']) && !empty($weapon['Magic_name'])): ?>
+                <div class="detail-description">
+                    <h3 class="detail-description-title">Magic Effect</h3>
+                    <div class="detail-description-content">
+                        <?php echo htmlspecialchars($weapon['Magic_name']); ?>
+                    </div>
+                </div>
+                <?php endif; ?>
                 
                 <!-- Description Section -->
                 <?php if (!empty($weapon['note'])): ?>

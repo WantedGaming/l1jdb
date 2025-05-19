@@ -168,4 +168,35 @@ class Weapon {
     public function getWeaponSpriteUrl($spriteId) {
         return SITE_URL . '/assets/img/icons/' . $spriteId . '.png';
     }
-}
+
+// Get additional damage info for a weapon
+    public function getWeaponDamage($weaponId) {
+        $sql = "SELECT * FROM weapon_damege WHERE item_id = ?";
+        return $this->db->fetchOne($sql, [$weaponId]);
+    }
+
+    // Get all weapon stats
+    public function getWeaponAllStats($weaponId) {
+        $sql = "SELECT * FROM weapon WHERE item_id = ?";
+        return $this->db->fetchOne($sql, [$weaponId]);
+    }
+
+    // Format resistance name
+    public function formatResistName($resistName) {
+        $mapping = [
+            'regist_skill' => 'Skill Resistance',
+            'regist_spirit' => 'Spirit Resistance',
+            'regist_dragon' => 'Dragon Resistance',
+            'regist_fear' => 'Fear Resistance',
+            'regist_all' => 'All Resistance',
+            'hitup_skill' => 'Skill Hit',
+            'hitup_spirit' => 'Spirit Hit',
+            'hitup_dragon' => 'Dragon Hit',
+            'hitup_fear' => 'Fear Hit',
+            'hitup_all' => 'All Hit',
+            'hitup_magic' => 'Magic Hit'
+        ];
+        
+        return isset($mapping[$resistName]) ? $mapping[$resistName] : ucfirst(str_replace('_', ' ', $resistName));
+    }
+} // This is the closing brace of the class
