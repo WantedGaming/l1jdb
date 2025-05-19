@@ -29,9 +29,9 @@ if (!isset($pageTitle)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <!-- CSS files -->
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="shortcut icon" href="<?php echo SITE_URL; ?>/assets/img/favicon/favicon.ico" type="image/x-icon">
 </head>
@@ -84,8 +84,8 @@ if (!isset($pageTitle)) {
                 </div>
             </nav>
         </div>
-		
-		<!-- Admin Scripts -->
-		<script src="<?php echo SITE_URL; ?>/assets/js/error-monitor.js"></script>
-		
+        
+        <!-- Admin Scripts -->
+        <script src="<?php echo SITE_URL; ?>/assets/js/admin.js"></script>
+        <script src="<?php echo SITE_URL; ?>/assets/js/error-monitor.js"></script>
     </header>
