@@ -13,6 +13,7 @@
     --spacing-md: 16px;
     --spacing-lg: 24px;
     --spacing-xl: 32px;
+    --spacing-xxl: 48px; /* Added new xxl spacing for larger gaps */
 }
 
 /* Base styles */
@@ -307,7 +308,7 @@ a:hover {
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl); /* Increased from spacing-lg to xl */
     margin-top: var(--spacing-xl);
 }
 
@@ -835,7 +836,7 @@ a:hover {
 .detail-container {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xxl); /* Increased from spacing-lg to xxl */
 }
 
 /* Title Card */
@@ -869,14 +870,16 @@ a:hover {
 .detail-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl); /* Increased from spacing-lg to xl */
+    margin-bottom: var(--spacing-md); /* Added margin to create more space between layouts */
 }
 
 /* Three column layout for stats cards */
 .detail-three-column-layout {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl); /* Increased from spacing-lg to xl */
+    margin-bottom: var(--spacing-md); /* Added margin to create more space between layouts */
 }
 
 /* Single column layout for stats in cards */
@@ -924,6 +927,7 @@ a:hover {
     height: 100%;
     display: flex;
     flex-direction: column;
+    margin-bottom: var(--spacing-lg); /* Added margin-bottom to separate cards */
 }
 
 .detail-stats {
@@ -970,6 +974,7 @@ a:hover {
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-lg);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--spacing-lg); /* Added margin-bottom to separate sections */
 }
 
 .detail-description-title {
@@ -988,6 +993,7 @@ a:hover {
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-lg);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--spacing-xl); /* Added margin-bottom to separate sections */
 }
 
 .detail-skill {
@@ -1007,7 +1013,7 @@ a:hover {
     padding: var(--spacing-lg);
     box-shadow: var(--card-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl); /* Increased from spacing-lg to xl */
 }
 
 .detail-skill-header {
