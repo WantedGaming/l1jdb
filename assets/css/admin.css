@@ -47,6 +47,7 @@ body.admin-body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .admin-logo {
@@ -154,7 +155,8 @@ body.admin-body {
   transition: transform var(--transition-speed);
 }
 
-.dropdown:hover .dropdown-toggle::after {
+.dropdown:hover .dropdown-toggle::after,
+.dropdown.active .dropdown-toggle::after {
   transform: rotate(180deg);
   border-top-color: var(--admin-accent);
 }
@@ -178,7 +180,8 @@ body.admin-body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown:hover .dropdown-menu,
+.dropdown.active .dropdown-menu {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
@@ -236,6 +239,7 @@ body.admin-body {
   justify-content: center;
   border: none;
   text-decoration: none;
+  height: 38px; /* Standardize button height */
 }
 
 .admin-button i {
@@ -587,7 +591,7 @@ body.admin-body {
   }
 }
 
-/* Page Header Actions */
+/* Page Header Actions - IMPROVED ALIGNMENT */
 .admin-header-actions {
   display: flex;
   justify-content: space-between;
@@ -595,6 +599,8 @@ body.admin-body {
   margin-bottom: var(--spacing-lg);
   padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--admin-border);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
 }
 
 .admin-page-title {
@@ -607,6 +613,8 @@ body.admin-body {
 .admin-header-buttons {
   display: flex;
   gap: var(--spacing-md);
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 /* Table Styles */
@@ -673,7 +681,7 @@ body.admin-body {
   display: inline;
 }
 
-/* Filters */
+/* Filters - IMPROVED LAYOUT */
 .admin-filters {
   background-color: var(--admin-primary);
   border-radius: var(--border-radius);
@@ -687,17 +695,20 @@ body.admin-body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: var(--spacing-md);
+  align-items: end;
 }
 
 .admin-filter-group {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-filter-label {
   display: block;
   margin-bottom: var(--spacing-sm);
   font-weight: 500;
-  color: var(--admin-light);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .admin-filter-input,
@@ -709,6 +720,7 @@ body.admin-body {
   border-radius: var(--border-radius);
   color: var(--text);
   transition: var(--admin-transition);
+  height: 40px;
 }
 
 .admin-filter-input:focus,
@@ -719,16 +731,21 @@ body.admin-body {
 }
 
 .admin-filter-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-sm);
-  align-items: flex-end;
+  align-self: flex-end;
 }
 
 /* Results Count */
 .admin-results-count {
+  background-color: var(--admin-secondary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
   margin: var(--spacing-md) 0;
   color: var(--admin-light);
   font-size: 0.9rem;
+  display: inline-block;
 }
 
 /* Pagination */
@@ -829,6 +846,12 @@ body.admin-body {
   color: var(--text);
   transition: var(--admin-transition);
   font-size: 0.95rem;
+  height: 40px;
+}
+
+.admin-form-textarea {
+  height: auto;
+  min-height: 150px;
 }
 
 .admin-form-input:focus,
@@ -1073,6 +1096,7 @@ body.admin-body {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 45px;
 }
 
 .login-button i {
@@ -1142,7 +1166,7 @@ body.admin-body {
   align-items: center;
 }
 
-/* Responsive styles */
+/* Responsive styles - IMPROVED MOBILE LAYOUTS */
 @media (max-width: 992px) {
   .admin-content-area {
     grid-template-columns: 1fr;
@@ -1164,6 +1188,7 @@ body.admin-body {
 @media (max-width: 768px) {
   .admin-header-container {
     flex-direction: column;
+    align-items: center;
   }
   
   .admin-logo {
@@ -1199,16 +1224,11 @@ body.admin-body {
   .admin-header-buttons {
     margin-top: var(--spacing-md);
     width: 100%;
+    justify-content: space-between;
   }
-  
-  .admin-button {
-    flex: 1;
-    justify-content: center;
-  }
-  
+
   .admin-filter-actions {
-    flex-direction: column;
-    width: 100%;
+    grid-column: 1 / -1;
   }
   
   .admin-form-checkboxes {
@@ -1240,5 +1260,18 @@ body.admin-body {
   
   .admin-delete-message {
     font-size: 1rem;
+  }
+  
+  .admin-filter-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header-buttons {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .admin-header-buttons .admin-button {
+    width: 100%;
   }
 }
