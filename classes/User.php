@@ -1,4 +1,5 @@
 <?php
+// Modified User.php with improved getActivityLogs method
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
 
@@ -117,17 +118,25 @@ class User {
         $this->db->insert('admin_activity', $data);
     }
     
-    // Get admin activity logs
-    public function getActivityLogs($page = 1, $perPage = ITEMS_PER_PAGE, $username = null) {
-        $conditions = '';
-        $params = [];
-        
-        if ($username) {
-            $conditions = 'admin_username = ?';
-            $params = [$username];
+    // Get admin activity logs with improved filtering capabilities
+    public function getActivityLogs($page = 1, $perPage = ITEMS_PER_PAGE, $conditions = '', $params = []) {
+        // If no specific conditions are provided, use a default empty condition
+        if (empty($conditions)) {
+            $conditions = '1=1'; // This is always true, effectively no condition
         }
         
-        return $this->db->paginate('admin_activity', $page, $perPage, $conditions, $params, 'timestamp DESC');
+        // Build the query with the conditions
+        $query = "SELECT * FROM admin_activity WHERE $conditions ORDER BY timestamp DESC";
+        
+        // Get the paginated results
+        return $this->db->paginate(
+            'admin_activity',
+            $page,
+            $perPage,
+            $conditions,
+            $params,
+            'timestamp DESC'
+        );
     }
     
     // Create admin_activity table if it doesn't exist
