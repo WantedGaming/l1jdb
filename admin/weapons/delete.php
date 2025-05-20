@@ -34,24 +34,37 @@ if (!$weapon) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
-    if ($weaponsModel->deleteWeapon($weaponId)) {
+    $result = $weaponsModel->deleteWeapon($weaponId);
+    
+    if ($result['success']) {
         // Get current user data
         $currentUser = $user->getCurrentUser();
         
-        // Log activity with null-safe username
+        // Build detailed deletion message
+        $deletionDetails = "Deleted weapon: {$weapon['desc_en']} (ID: $weaponId). ";
+        $deletionDetails .= "Related records deleted: ";
+        $deletionDetails .= "Droplists: {$result['report']['droplist']}, ";
+        $deletionDetails .= "Weapon Skills: {$result['report']['weapon_skill']}, ";
+        $deletionDetails .= "Weapon Skill Models: {$result['report']['weapon_skill_model']}, ";
+        $deletionDetails .= "Weapon Damage Entries: {$result['report']['weapon_damege']}";
+        
+        // Log activity with null-safe username and detailed deletion info
         $user->logActivity(
             $currentUser ? $currentUser['login'] : null,
             'delete',
-            "Deleted weapon: {$weapon['desc_en']} (ID: $weaponId)",
+            $deletionDetails,
             'weapon',
             $weaponId
         );
         
-        // Redirect to the weapons list with success message
-        header('Location: index.php?deleted=1');
+        // Store deletion report in session for display on the index page
+        $_SESSION['deletion_report'] = $result['report'];
+        
+        // Redirect to the weapons list with success message and detailed report
+        header('Location: index.php?deleted=1&weapon_name=' . urlencode($weapon['desc_en']));
         exit;
     } else {
-        $errorMessage = "Failed to delete weapon. Please try again.";
+        $errorMessage = $result['message'] ?? "Failed to delete weapon. Please try again.";
     }
 }
 
@@ -121,6 +134,52 @@ include '../../includes/admin-header.php';
                                 <span class="admin-delete-value"><?php echo $weapon['itemGrade']; ?></span>
                             </div>
                         </div>
+                        
+                        <div class="admin-alert admin-alert-warning">
+                            <p><strong>Warning:</strong> This will also delete all related data:</p>
+                            <ul class="admin-alert-list">
+                                <li>Monster drop entries for this weapon</li>
+                                <li>Weapon skills associated with this weapon</li>
+                                <li>Weapon skill models for this weapon</li>
+                                <li>Additional damage entries for this weapon</li>
+                            </ul>
+                            <p>You will receive a detailed report of deleted items after confirmation.</p>
+                        </div>
+
+<style>
+.admin-alert {
+    padding: 16px;
+    border-radius: var(--border-radius);
+}
+
+.admin-alert p {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.admin-alert p:last-child {
+    margin-bottom: 0;
+}
+
+.admin-alert-list {
+    margin: 8px 0 12px 24px;
+    padding-left: 8px;
+}
+
+.admin-alert-list li {
+    margin-bottom: 6px;
+}
+
+.admin-alert-list li:last-child {
+    margin-bottom: 0;
+}
+
+.admin-alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-left: 3px solid var(--admin-warning);
+    color: var(--admin-warning);
+}
+</style>
                     </div>
                     
                     <div class="admin-delete-actions">

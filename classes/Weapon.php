@@ -148,9 +148,76 @@ class Weapon {
         return $this->db->update('weapon', $data, 'item_id = ?', [$id]);
     }
     
-    // Delete a weapon
+    // Delete a weapon with cascading delete of related records
     public function deleteWeapon($id) {
-        return $this->db->delete('weapon', 'item_id = ?', [$id]);
+        try {
+            // Start a transaction to ensure all operations complete or none do
+            $this->db->beginTransaction();
+            
+            // Initialize deletion tracking
+            $deletionReport = [
+                'droplist' => 0,
+                'weapon_skill' => 0,
+                'weapon_skill_model' => 0,
+                'weapon_damege' => 0,
+                'weapon' => 0
+            ];
+            
+            // Step 1: Count and delete from droplist
+            // Count first
+            $sql = "SELECT COUNT(*) as count FROM droplist WHERE itemId = ?";
+            $result = $this->db->fetchOne($sql, [$id]);
+            $deletionReport['droplist'] = $result ? $result['count'] : 0;
+            // Then delete
+            $this->db->delete('droplist', 'itemId = ?', [$id]);
+            
+            // Step 2: Count and delete from weapon_skill
+            $sql = "SELECT COUNT(*) as count FROM weapon_skill WHERE weapon_id = ?";
+            $result = $this->db->fetchOne($sql, [$id]);
+            $deletionReport['weapon_skill'] = $result ? $result['count'] : 0;
+            $this->db->delete('weapon_skill', 'weapon_id = ?', [$id]);
+            
+            // Step 3: Count and delete from weapon_skill_model
+            $sql = "SELECT COUNT(*) as count FROM weapon_skill_model WHERE item_id = ?";
+            $result = $this->db->fetchOne($sql, [$id]);
+            $deletionReport['weapon_skill_model'] = $result ? $result['count'] : 0;
+            $this->db->delete('weapon_skill_model', 'item_id = ?', [$id]);
+            
+            // Step 4: Count and delete from weapon_damege
+            $sql = "SELECT COUNT(*) as count FROM weapon_damege WHERE item_id = ?";
+            $result = $this->db->fetchOne($sql, [$id]);
+            $deletionReport['weapon_damege'] = $result ? $result['count'] : 0;
+            $this->db->delete('weapon_damege', 'item_id = ?', [$id]);
+            
+            // Step 5: Delete the weapon itself (should be 1 record)
+            $result = $this->db->delete('weapon', 'item_id = ?', [$id]);
+            $deletionReport['weapon'] = $result ? 1 : 0;
+            
+            // If weapon deletion was successful, commit the transaction
+            if ($result) {
+                $this->db->commit();
+                return [
+                    'success' => true,
+                    'report' => $deletionReport
+                ];
+            } else {
+                // If weapon deletion failed, roll back the transaction
+                $this->db->rollBack();
+                return [
+                    'success' => false,
+                    'message' => 'Weapon not found or could not be deleted.'
+                ];
+            }
+        } catch (Exception $e) {
+            // If any error occurs, roll back the transaction
+            $this->db->rollBack();
+            // Log the exception message
+            error_log('Error deleting weapon: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Database error: ' . $e->getMessage()
+            ];
+        }
     }
     
     // Get recently added weapons
@@ -169,7 +236,7 @@ class Weapon {
         return SITE_URL . '/assets/img/icons/' . $spriteId . '.png';
     }
 
-// Get additional damage info for a weapon
+    // Get additional damage info for a weapon
     public function getWeaponDamage($weaponId) {
         $sql = "SELECT * FROM weapon_damege WHERE item_id = ?";
         return $this->db->fetchOne($sql, [$weaponId]);
@@ -225,4 +292,4 @@ class Weapon {
 		// Fall back to GIF
 		return SITE_URL . '/' . $gifPath;
 	}
-} // This is the closing brace of the class
+}

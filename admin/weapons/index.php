@@ -69,22 +69,36 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
     $weapon = $weaponsModel->getWeaponById($weaponId);
     
     if ($weapon) {
-        if ($weaponsModel->deleteWeapon($weaponId)) {
+        $result = $weaponsModel->deleteWeapon($weaponId);
+        
+        if ($result['success']) {
             // Get current user data
             $currentUser = $user->getCurrentUser();
             
-            // Log activity with null-safe username
+            // Build detailed deletion message
+            $deletionDetails = "Deleted weapon: {$weapon['desc_en']} (ID: $weaponId). ";
+            $deletionDetails .= "Related records deleted: ";
+            $deletionDetails .= "Droplists: {$result['report']['droplist']}, ";
+            $deletionDetails .= "Weapon Skills: {$result['report']['weapon_skill']}, ";
+            $deletionDetails .= "Weapon Skill Models: {$result['report']['weapon_skill_model']}, ";
+            $deletionDetails .= "Weapon Damage Entries: {$result['report']['weapon_damege']}";
+            
+            // Log activity with null-safe username and detailed deletion info
             $user->logActivity(
                 $currentUser ? $currentUser['login'] : null,
                 'delete',
-                "Deleted weapon: {$weapon['desc_en']} (ID: $weaponId)",
+                $deletionDetails,
                 'weapon',
                 $weaponId
             );
             
+            // Store deletion report in session
+            $_SESSION['deletion_report'] = $result['report'];
+            $_SESSION['deleted_weapon_name'] = $weapon['desc_en'];
+            
             $successMessage = "Weapon '{$weapon['desc_en']}' has been deleted successfully.";
         } else {
-            $errorMessage = "Failed to delete weapon. Please try again.";
+            $errorMessage = $result['message'] ?? "Failed to delete weapon. Please try again.";
         }
     } else {
         $errorMessage = "Weapon not found.";
@@ -95,6 +109,23 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
 $weaponTypes = $weaponsModel->getWeaponTypes();
 $weaponMaterials = $weaponsModel->getWeaponMaterials();
 $weaponGrades = $weaponsModel->getWeaponGrades();
+
+// Prepare deletion report from session if available
+$deletionReport = null;
+$deletedWeaponName = null;
+if (isset($_GET['deleted']) && $_GET['deleted'] == 1) {
+    if (isset($_SESSION['deletion_report'])) {
+        $deletionReport = $_SESSION['deletion_report'];
+        unset($_SESSION['deletion_report']);
+    }
+    
+    if (isset($_GET['weapon_name'])) {
+        $deletedWeaponName = urldecode($_GET['weapon_name']);
+    } elseif (isset($_SESSION['deleted_weapon_name'])) {
+        $deletedWeaponName = $_SESSION['deleted_weapon_name'];
+        unset($_SESSION['deleted_weapon_name']);
+    }
+}
 
 // Include admin header
 include '../../includes/admin-header.php';
@@ -123,7 +154,25 @@ include '../../includes/admin-header.php';
             </div>
             <?php endif; ?>
             
-            <?php if (isset($_GET['deleted']) && $_GET['deleted'] == 1): ?>
+            <?php if ($deletionReport && $deletedWeaponName): ?>
+            <div class="admin-alert admin-alert-success">
+                <p><strong>Success:</strong> Weapon "<?php echo htmlspecialchars($deletedWeaponName); ?>" has been deleted successfully.</p>
+                <div class="admin-deletion-report">
+                    <p><strong>Deletion Report:</strong></p>
+                    <ul>
+                        <li>Weapon record: <?php echo $deletionReport['weapon']; ?></li>
+                        <li>Drop entries: <?php echo $deletionReport['droplist']; ?></li>
+                        <li>Weapon skills: <?php echo $deletionReport['weapon_skill']; ?></li>
+                        <li>Skill models: <?php echo $deletionReport['weapon_skill_model']; ?></li>
+                        <li>Damage entries: <?php echo $deletionReport['weapon_damege']; ?></li>
+                    </ul>
+                    <p class="admin-deletion-total">
+                        <strong>Total records deleted:</strong> 
+                        <?php echo array_sum($deletionReport); ?>
+                    </p>
+                </div>
+            </div>
+            <?php elseif (isset($_GET['deleted']) && $_GET['deleted'] == 1): ?>
             <div class="admin-alert admin-alert-success">
                 Weapon has been deleted successfully.
             </div>
@@ -289,6 +338,30 @@ include '../../includes/admin-header.php';
         </div>
     </section>
 </main>
+
+<style>
+.admin-deletion-report {
+    margin-top: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: var(--border-radius);
+}
+
+.admin-deletion-report ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.admin-deletion-report li {
+    margin-bottom: 4px;
+}
+
+.admin-deletion-total {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+</style>
 
 <?php
 // Include admin footer

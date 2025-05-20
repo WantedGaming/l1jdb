@@ -686,7 +686,6 @@ body.admin-body {
 }
 
 .admin-actions {
-  
   gap: 10px;
   justify-content: flex-start;
   align-items: center;
@@ -846,7 +845,7 @@ body.admin-body {
 
 /* Form Styles */
 .admin-form-container {
-  background-color: var(--admin-primary);
+  background-color: var(--admin-dark);
   border-radius: var(--border-radius);
   padding: var(--spacing-lg);
   box-shadow: var(--admin-shadow);
@@ -858,6 +857,7 @@ body.admin-body {
   margin-bottom: var(--spacing-xl);
   padding-bottom: var(--spacing-lg);
   border-bottom: 1px solid var(--admin-border);
+  background-color: transparent;
 }
 
 .admin-form-section:last-child {
@@ -1536,7 +1536,216 @@ body.admin-body {
   background-color: rgba(249, 75, 31, 0.1) !important;
 }
 
-/* Responsive adjustments */
+/* Tab Navigation Styles */
+.admin-tabs {
+  margin-bottom: var(--spacing-lg);
+  overflow-x: auto;
+}
+
+.admin-tabs-nav {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--admin-border);
+  white-space: nowrap;
+}
+
+.admin-tab-item {
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-right: 2px;
+  background-color: var(--admin-secondary);
+  color: var(--admin-light);
+  cursor: pointer;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  border: 1px solid var(--admin-border);
+  border-bottom: none;
+  position: relative;
+  top: 1px;
+  transition: var(--admin-transition);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.admin-tab-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.admin-tab-item.active {
+  background-color: var(--admin-dark);
+  color: var(--admin-accent);
+  border-bottom: 1px solid var(--admin-dark);
+}
+
+/* Tab Content Styles */
+.admin-tabs-content {
+  background-color: transparent;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  padding-top: var(--spacing-md);
+}
+
+.admin-tab-pane {
+  display: none;
+  background-color: transparent;
+}
+
+.admin-tab-pane.active {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Admin Form with Image Preview */
+.admin-form-input-with-preview {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.admin-image-preview-container {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: var(--admin-secondary);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.admin-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: var(--admin-secondary);
+}
+
+.admin-image-preview-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.admin-image-preview-container.loading .admin-image-preview-loading {
+  opacity: 1;
+}
+
+/* Detail-style Layout for Admin Forms */
+.admin-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-image-card {
+  background-color: var(--admin-dark);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--admin-shadow);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--spacing-md);
+  height: 200px;
+  background-color: var(--admin-secondary);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--admin-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-image-large {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.admin-status-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.admin-status-indicator.success {
+  color: var(--admin-success);
+}
+
+.admin-status-indicator.error {
+  color: var(--admin-danger);
+}
+
+.admin-form-header {
+  margin-bottom: var(--spacing-md);
+  font-size: 1.2rem;
+  color: var(--admin-accent);
+  font-weight: 600;
+  border-bottom: 1px solid var(--admin-border);
+  padding-bottom: var(--spacing-sm);
+}
+
+.admin-basic-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Property Toggles Section */
+.admin-property-toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-property-toggle {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background-color: var(--admin-input-bg);
+  border: 1px solid var(--admin-border);
+  transition: var(--admin-transition);
+}
+
+.admin-property-toggle:hover {
+  background-color: var(--admin-hover-bg);
+}
+
+.admin-property-toggle label {
+  margin-left: var(--spacing-sm);
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 500;
+  flex: 1;
+}
+
+.admin-property-toggle input[type="checkbox"] {
+  accent-color: var(--admin-accent);
+  cursor: pointer;
+}
 @media (max-width: 1200px) {
   .admin-filter-form {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1652,6 +1861,18 @@ body.admin-body {
   
   .activity-day-bar-container {
     height: 100px;
+  }
+  
+  .admin-tabs-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--spacing-sm);
+  }
+  
+  .admin-tab-item {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    padding: var(--spacing-sm) 10px;
   }
 }
 
