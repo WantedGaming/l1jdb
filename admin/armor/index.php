@@ -45,6 +45,10 @@ if (isset($_GET['filter'])) {
     if (!empty($_GET['has_set'])) {
         $filters['has_set'] = $_GET['has_set'];
     }
+    
+    if (!empty($_GET['has_bin'])) {
+        $filters['has_bin'] = $_GET['has_bin'];
+    }
 }
 
 // Get data based on search or filters
@@ -189,6 +193,14 @@ include '../../includes/admin-header.php';
                         </select>
                     </div>
                     
+                    <div class="admin-filter-group">
+                        <label for="has_bin" class="admin-filter-label">Bin Data</label>
+                        <select id="has_bin" name="has_bin" class="admin-filter-select">
+                            <option value="">All Items</option>
+                            <option value="1" <?php echo (isset($filters['has_bin']) && $filters['has_bin'] == 1) ? 'selected' : ''; ?>>With Bin Data Only</option>
+                        </select>
+                    </div>
+                    
                     <div class="admin-filter-actions">
                         <input type="hidden" name="filter" value="1">
                         <button type="submit" class="admin-button admin-button-primary">Apply Filters</button>
@@ -214,13 +226,14 @@ include '../../includes/admin-header.php';
                             <th>Type</th>
                             <th>AC</th>
                             <th>Grade</th>
+                            <th>Bin</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($armors['data'])): ?>
                         <tr>
-                            <td colspan="8" class="admin-table-empty">No armor found. Please try a different search or filter.</td>
+                            <td colspan="9" class="admin-table-empty">No armor found. Please try a different search or filter.</td>
                         </tr>
                         <?php else: ?>
                             <?php foreach ($armors['data'] as $armor): ?>
@@ -234,6 +247,13 @@ include '../../includes/admin-header.php';
                                 <td><?php echo $armor['type']; ?></td>
                                 <td><?php echo $armor['ac']; ?></td>
                                 <td><?php echo $armor['itemGrade']; ?></td>
+                                <td>
+                                    <?php if ($armorModel->hasBinData($armor['item_name_id'])): ?>
+                                    <span class="admin-badge admin-badge-success" title="Has bin data">✓</span>
+                                    <?php else: ?>
+                                    <span class="admin-badge admin-badge-secondary" title="No bin data">-</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="admin-actions">
                                     <a href="../../public/armor/detail.php?id=<?php echo $armor['item_id']; ?>" class="admin-button admin-button-info" title="View">
                                         <i class="fas fa-eye"></i>
@@ -244,6 +264,11 @@ include '../../includes/admin-header.php';
                                     <a href="delete.php?id=<?php echo $armor['item_id']; ?>" class="admin-button admin-button-danger" title="Delete">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
+                                    <?php if ($armorModel->hasBinData($armor['item_name_id'])): ?>
+                                    <a href="bin_data.php?name_id=<?php echo $armor['item_name_id']; ?>" class="admin-button admin-button-warning" title="View Bin Data">
+                                        <i class="fas fa-database"></i>
+                                    </a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -293,6 +318,26 @@ include '../../includes/admin-header.php';
         </div>
     </section>
 </main>
+
+<style>
+.admin-badge {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+.admin-badge-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+.admin-badge-secondary {
+    background-color: rgba(108, 117, 125, 0.2);
+    color: #6c757d;
+}
+</style>
 
 <?php
 // Include admin footer

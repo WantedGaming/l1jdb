@@ -30,6 +30,28 @@ class Armor {
         return $this->db->fetchOne($sql, [$id]);
     }
     
+    // Get armor by name ID
+    public function getArmorByNameId($nameId) {
+        $sql = "SELECT * FROM armor WHERE item_name_id = ?";
+        return $this->db->fetchAll($sql, [$nameId]);
+    }
+    
+    // Get related bin item data
+    public function getBinItemData($nameId) {
+        $sql = "SELECT * FROM bin_item_common WHERE name_id = ?";
+        return $this->db->fetchOne($sql, [$nameId]);
+    }
+    
+    // Check if armor has related bin data
+    public function hasBinData($nameId) {
+        if (!$nameId || $nameId <= 0) {
+            return false;
+        }
+        $sql = "SELECT COUNT(*) as count FROM bin_item_common WHERE name_id = ?";
+        $result = $this->db->fetchOne($sql, [$nameId]);
+        return ($result && $result['count'] > 0);
+    }
+    
     // Search armor
     public function searchArmor($searchTerm, $page = 1, $perPage = ITEMS_PER_PAGE) {
         $columns = ['armor.item_id', 'armor.desc_kr', 'armor.desc_en', 'armor.type', 'armor.material'];
@@ -80,6 +102,11 @@ class Armor {
         
         if (!empty($filters['has_set'])) {
             $conditions[] = 'armor.Set_Id > 0';
+        }
+        
+        if (!empty($filters['has_bin'])) {
+            $conditions[] = 'armor.item_name_id > 0';
+            $conditions[] = 'EXISTS (SELECT 1 FROM bin_item_common b WHERE b.name_id = armor.item_name_id)';
         }
         
         $conditionSql = !empty($conditions) ? implode(' AND ', $conditions) : '';
@@ -179,9 +206,52 @@ class Armor {
         return $this->db->update('armor', $data, 'item_id = ?', [$id]);
     }
     
-    // Delete an armor
+    // Delete an armor with cascading delete of related records
     public function deleteArmor($id) {
-        return $this->db->delete('armor', 'item_id = ?', [$id]);
+        try {
+            // Start a transaction
+            $this->db->beginTransaction();
+            
+            // Initialize deletion tracking
+            $deletionReport = [
+                'droplist' => 0,
+                'armor' => 0
+            ];
+            
+            // Step 1: Count and delete from droplist
+            $sql = "SELECT COUNT(*) as count FROM droplist WHERE itemId = ?";
+            $result = $this->db->fetchOne($sql, [$id]);
+            $deletionReport['droplist'] = $result ? $result['count'] : 0;
+            $this->db->delete('droplist', 'itemId = ?', [$id]);
+            
+            // Step 2: Delete the armor itself
+            $result = $this->db->delete('armor', 'item_id = ?', [$id]);
+            $deletionReport['armor'] = $result ? 1 : 0;
+            
+            // If successful, commit transaction
+            if ($result) {
+                $this->db->commit();
+                return [
+                    'success' => true,
+                    'report' => $deletionReport
+                ];
+            } else {
+                // If failed, roll back
+                $this->db->rollBack();
+                return [
+                    'success' => false,
+                    'message' => 'Armor not found or could not be deleted.'
+                ];
+            }
+        } catch (Exception $e) {
+            // Roll back on any error
+            $this->db->rollBack();
+            error_log('Error deleting armor: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Database error: ' . $e->getMessage()
+            ];
+        }
     }
     
     // Create a new armor set
