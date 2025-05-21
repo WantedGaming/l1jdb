@@ -292,4 +292,36 @@ class Weapon {
 		// Fall back to GIF
 		return SITE_URL . '/' . $gifPath;
 	}
+    
+    // Check if a weapon has bin data
+    public function hasBinData($nameId) {
+        if (empty($nameId)) {
+            return false;
+        }
+        
+        $sql = "SELECT COUNT(*) as count FROM bin_item_common WHERE name_id = ?";
+        $result = $this->db->fetchOne($sql, [$nameId]);
+        
+        return $result && $result['count'] > 0;
+    }
+    
+    // Get bin data for a weapon
+    public function getBinItemData($nameId) {
+        if (empty($nameId)) {
+            return null;
+        }
+        
+        $sql = "SELECT * FROM bin_item_common WHERE name_id = ?";
+        return $this->db->fetchOne($sql, [$nameId]);
+    }
+    
+    // Get all weapons with the same name ID
+    public function getWeaponsByNameId($nameId) {
+        if (empty($nameId)) {
+            return [];
+        }
+        
+        $sql = "SELECT * FROM weapon WHERE item_name_id = ? ORDER BY item_id";
+        return $this->db->fetchAll($sql, [$nameId]);
+    }
 }

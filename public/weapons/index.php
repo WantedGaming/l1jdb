@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../classes/User.php';
 require_once __DIR__ . '/../../classes/Weapon.php';
-require_once __DIR__ . '/../../includes/functions.php'; // Add this line to include our new helper functions
+require_once __DIR__ . '/../../includes/functions.php';
 
 // Initialize session
 init_session();
@@ -103,7 +103,7 @@ include '../../includes/hero.php';
                             <option value="">All Grades</option>
                             <?php foreach ($weaponGrades as $grade): ?>
                             <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-                                <?php echo $grade; ?>
+                                <?php echo formatArmorGrade($grade); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -134,17 +134,17 @@ include '../../includes/hero.php';
                         <a href="detail.php?id=<?php echo $weapon['item_id']; ?>" class="card-link-overlay"></a>
                         <div class="card-header">
                             <h3 class="card-header-title"><?php echo formatWeaponType($weapon['type']); ?></h3>
-                            <span class="card-badge"><?php echo $weapon['itemGrade']; ?></span>
+                            <span class="card-badge"><?php echo formatArmorGrade($weapon['itemGrade']); ?></span>
                         </div>
                         <div class="card-img-container">
-                            <img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?>" class="card-img">
+                            <img src="<?php echo getItemIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?>" class="card-img">
                         </div>
                         <div class="card-content">
                             <h3 class="card-title"><?php echo htmlspecialchars(cleanItemName($weapon['desc_en'])); ?></h3>
                             <div class="card-stats">
                                 <div class="card-stat">
                                     <span class="card-stat-label">Damage:</span>
-                                    <span class="card-stat-value"><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></span>
+                                    <span class="card-stat-value"><?php echo formatDamageRange($weapon['dmg_small'], $weapon['dmg_large']); ?></span>
                                 </div>
                                 <div class="card-stat">
                                     <span class="card-stat-label">Material:</span>

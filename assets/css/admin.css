@@ -1910,3 +1910,26 @@ body.admin-body {
     grid-template-columns: 1fr;
   }
 }
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.admin-badge-success {
+  background-color: var(--admin-success);
+  color: white;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.admin-badge-secondary {
+  background-color: var(--admin-secondary);
+  color: var(--admin-light);
+  border: 1px solid var(--admin-border);
+}

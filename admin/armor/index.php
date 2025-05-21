@@ -319,26 +319,6 @@ include '../../includes/admin-header.php';
     </section>
 </main>
 
-<style>
-.admin-badge {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    border-radius: 50%;
-    font-weight: bold;
-}
-.admin-badge-success {
-    background-color: rgba(40, 167, 69, 0.2);
-    color: #28a745;
-}
-.admin-badge-secondary {
-    background-color: rgba(108, 117, 125, 0.2);
-    color: #6c757d;
-}
-</style>
-
 <?php
 // Include admin footer
 include '../../includes/admin-footer.php';

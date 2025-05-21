@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../classes/User.php';
-require_once __DIR__ . '/../../classes/Armor.php';
+require_once __DIR__ . '/../../classes/Item.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
 // Initialize session
@@ -12,21 +12,25 @@ init_session();
 // Initialize user
 $user = new User();
 
-// Initialize armor model
-$armorModel = new Armor();
+// Initialize item model
+$itemModel = new Item();
 
 // Get page number for pagination
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $page = max(1, $page); // Ensure page is at least 1
 
 // Handle search
-$searchTerm = isset($_GET['q']) ? trim($_GET['q']) : ''; 
+$searchTerm = isset($_GET['q']) ? trim($_GET['q']) : '';
 
 // Handle filters
 $filters = [];
 if (isset($_GET['filter'])) {
-    if (!empty($_GET['type'])) {
-        $filters['type'] = $_GET['type'];
+    if (!empty($_GET['item_type'])) {
+        $filters['item_type'] = $_GET['item_type'];
+    }
+    
+    if (!empty($_GET['use_type'])) {
+        $filters['use_type'] = $_GET['use_type'];
     }
     
     if (!empty($_GET['material'])) {
@@ -36,32 +40,33 @@ if (isset($_GET['filter'])) {
     if (!empty($_GET['grade'])) {
         $filters['grade'] = $_GET['grade'];
     }
-
-    if (!empty($_GET['has_set'])) {
-        $filters['has_set'] = $_GET['has_set'];
+    
+    if (!empty($_GET['max_charge_count']) && $_GET['max_charge_count'] > 0) {
+        $filters['max_charge_count'] = $_GET['max_charge_count'];
     }
 }
 
 // Get data based on search or filters
 if (!empty($searchTerm)) {
-    $armors = $armorModel->searchArmor($searchTerm, $page);
-    $pageTitle = "Search Results for \"$searchTerm\" - Armor";
+    $items = $itemModel->searchItems($searchTerm, $page);
+    $pageTitle = "Search Results for \"$searchTerm\" - Items";
 } elseif (!empty($filters)) {
-    $armors = $armorModel->filterArmor($filters, $page);
-    $pageTitle = "Filtered Armor";
+    $items = $itemModel->filterItems($filters, $page);
+    $pageTitle = "Filtered Items";
 } else {
-    $armors = $armorModel->getAllArmor($page);
-    $pageTitle = "All Armor";
+    $items = $itemModel->getAllItems($page);
+    $pageTitle = "All Items";
 }
 
 // Get filter options for the filter form
-$armorTypes = $armorModel->getArmorTypes();
-$armorMaterials = $armorModel->getArmorMaterials();
-$armorGrades = $armorModel->getArmorGrades();
+$itemTypes = $itemModel->getItemTypes();
+$itemUseTypes = $itemModel->getItemUseTypes();
+$itemMaterials = $itemModel->getItemMaterials();
+$itemGrades = $itemModel->getItemGrades();
 
 // Include header
-$heroTitle = "Armor Database";
-$heroSubtitle = "Explore all armor available in the game world";
+$heroTitle = "Items Database";
+$heroSubtitle = "Explore all items available in the game world";
 include '../../includes/header.php';
 include '../../includes/hero.php';
 ?>
@@ -78,12 +83,24 @@ include '../../includes/hero.php';
             <div class="filters">
                 <form action="index.php" method="get" class="filter-form filter-form-inline">
                     <div class="filter-group">
-                        <label for="type" class="filter-label">Armor Type</label>
-                        <select id="type" name="type" class="filter-select">
+                        <label for="item_type" class="filter-label">Item Type</label>
+                        <select id="item_type" name="item_type" class="filter-select">
                             <option value="">All Types</option>
-                            <?php foreach ($armorTypes as $type): ?>
-                            <option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
-                                <?php echo formatArmorType($type); ?>
+                            <?php foreach ($itemTypes as $type): ?>
+                            <option value="<?php echo $type; ?>" <?php echo (isset($filters['item_type']) && $filters['item_type'] === $type) ? 'selected' : ''; ?>>
+                                <?php echo ucfirst(strtolower(str_replace('_', ' ', $type))); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="use_type" class="filter-label">Use Type</label>
+                        <select id="use_type" name="use_type" class="filter-select">
+                            <option value="">All Use Types</option>
+                            <?php foreach ($itemUseTypes as $useType): ?>
+                            <option value="<?php echo $useType; ?>" <?php echo (isset($filters['use_type']) && $filters['use_type'] === $useType) ? 'selected' : ''; ?>>
+                                <?php echo ucfirst(strtolower(str_replace('_', ' ', $useType))); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -93,7 +110,7 @@ include '../../includes/hero.php';
                         <label for="material" class="filter-label">Material</label>
                         <select id="material" name="material" class="filter-select">
                             <option value="">All Materials</option>
-                            <?php foreach ($armorMaterials as $material): ?>
+                            <?php foreach ($itemMaterials as $material): ?>
                             <option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
                                 <?php echo formatMaterial($material); ?>
                             </option>
@@ -105,19 +122,11 @@ include '../../includes/hero.php';
                         <label for="grade" class="filter-label">Grade</label>
                         <select id="grade" name="grade" class="filter-select">
                             <option value="">All Grades</option>
-                            <?php foreach ($armorGrades as $grade): ?>
+                            <?php foreach ($itemGrades as $grade): ?>
                             <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
                                 <?php echo formatArmorGrade($grade); ?>
                             </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="has_set" class="filter-label">Set Items</label>
-                        <select id="has_set" name="has_set" class="filter-select">
-                            <option value="">All Items</option>
-                            <option value="1" <?php echo (isset($filters['has_set']) && $filters['has_set'] == 1) ? 'selected' : ''; ?>>Set Items Only</option>
                         </select>
                     </div>
                     
@@ -131,41 +140,43 @@ include '../../includes/hero.php';
             
             <!-- Results Count -->
             <p class="results-count">
-                Showing <?php echo count($armors['data']); ?> of <?php echo $armors['total_records']; ?> armor pieces
+                Showing <?php echo count($items['data']); ?> of <?php echo $items['total_records']; ?> items
             </p>
             
-            <!-- Armor Grid -->
+            <!-- Items Grid -->
             <div class="card-grid">
-                <?php if (empty($armors['data'])): ?>
+                <?php if (empty($items['data'])): ?>
                 <div class="no-results">
-                    <p>No armor found. Please try a different search or filter.</p>
+                    <p>No items found. Please try a different search or filter.</p>
                 </div>
                 <?php else: ?>
-                    <?php foreach ($armors['data'] as $armor): ?>
+                    <?php foreach ($items['data'] as $item): ?>
                     <div class="card item-card">
-                        <a href="detail.php?id=<?php echo $armor['item_id']; ?>" class="card-link-overlay"></a>
+                        <a href="detail.php?id=<?php echo $item['item_id']; ?>" class="card-link-overlay"></a>
                         <div class="card-header">
-                            <h3 class="card-header-title"><?php echo formatArmorType($armor['type']); ?></h3>
-                            <span class="card-badge"><?php echo formatArmorGrade($armor['itemGrade']); ?></span>
+                            <h3 class="card-header-title"><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?></h3>
+                            <span class="card-badge"><?php echo formatArmorGrade($item['itemGrade']); ?></span>
                         </div>
                         <div class="card-img-container">
-                            <img src="<?php echo getItemIconUrl($armor['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?>" class="card-img">
+                            <img src="<?php echo getItemIconUrl($item['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($item['desc_en'])); ?>" class="card-img">
                         </div>
                         <div class="card-content">
-                            <h3 class="card-title"><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></h3>
+                            <h3 class="card-title"><?php echo htmlspecialchars(cleanItemName($item['desc_en'])); ?></h3>
                             <div class="card-stats">
                                 <div class="card-stat">
-                                    <span class="card-stat-label">AC:</span>
-                                    <span class="card-stat-value"><?php echo $armor['ac']; ?></span>
+                                    <span class="card-stat-label">Use Type:</span>
+                                    <span class="card-stat-value">
+                                        <?php echo ucfirst(strtolower(str_replace('_', ' ', $item['use_type']))); ?>
+                                    </span>
                                 </div>
                                 <div class="card-stat">
                                     <span class="card-stat-label">Material:</span>
-                                    <span class="card-stat-value"><?php echo formatMaterial($armor['material']); ?></span>
+                                    <span class="card-stat-value"><?php echo formatMaterial($item['material']); ?></span>
                                 </div>
-                                <?php if ($armor['Set_Id'] > 0): ?>
+                                <?php if (isset($item['max_charge_count']) && $item['max_charge_count'] > 0): ?>
                                 <div class="card-stat">
-                                    <span class="card-stat-label">Set:</span>
-                                    <span class="card-stat-value">Yes</span>
+                                    <span class="card-stat-label">Charges:</span>
+                                    <span class="card-stat-value"><?php echo $item['max_charge_count']; ?></span>
                                 </div>
                                 <?php endif; ?>
                             </div>
@@ -182,7 +193,7 @@ include '../../includes/hero.php';
             </div>
             
             <!-- Pagination -->
-            <?php if ($armors['total_pages'] > 1): ?>
+            <?php if ($items['total_pages'] > 1): ?>
             <div class="pagination">
                 <?php if ($page > 1): ?>
                 <a href="?page=<?php echo $page - 1; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">&laquo; Previous</a>
@@ -190,7 +201,7 @@ include '../../includes/hero.php';
                 
                 <?php
                 $startPage = max(1, $page - 2);
-                $endPage = min($armors['total_pages'], $page + 2);
+                $endPage = min($items['total_pages'], $page + 2);
                 
                 if ($startPage > 1): ?>
                 <a href="?page=1<?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">1</a>
@@ -205,16 +216,16 @@ include '../../includes/hero.php';
                 </a>
                 <?php endfor; ?>
                 
-                <?php if ($endPage < $armors['total_pages']): ?>
-                <?php if ($endPage < $armors['total_pages'] - 1): ?>
+                <?php if ($endPage < $items['total_pages']): ?>
+                <?php if ($endPage < $items['total_pages'] - 1): ?>
                 <span class="pagination-ellipsis">...</span>
                 <?php endif; ?>
-                <a href="?page=<?php echo $armors['total_pages']; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">
-                    <?php echo $armors['total_pages']; ?>
+                <a href="?page=<?php echo $items['total_pages']; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">
+                    <?php echo $items['total_pages']; ?>
                 </a>
                 <?php endif; ?>
                 
-                <?php if ($page < $armors['total_pages']): ?>
+                <?php if ($page < $items['total_pages']): ?>
                 <a href="?page=<?php echo $page + 1; ?><?php echo !empty($searchTerm) ? '&q=' . urlencode($searchTerm) : ''; ?><?php echo !empty($filters) ? '&filter=1&' . http_build_query(array_filter($filters)) : ''; ?>" class="pagination-link">Next &raquo;</a>
                 <?php endif; ?>
             </div>

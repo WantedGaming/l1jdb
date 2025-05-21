@@ -190,57 +190,65 @@ include '../../includes/admin-header.php';
             </div>
             <?php endif; ?>
             
-            <!-- Search and Filters -->
-            <div class="admin-filters">
-                <form action="index.php" method="get" class="admin-filter-form">
-                    <div class="admin-filter-group">
-                        <label for="search" class="admin-filter-label">Search</label>
-                        <input type="text" id="search" name="search" class="admin-filter-input" value="<?php echo htmlspecialchars($searchTerm); ?>" placeholder="Search weapons...">
-                    </div>
-                    
-                    <div class="admin-filter-group">
-                        <label for="type" class="admin-filter-label">Weapon Type</label>
-                        <select id="type" name="type" class="admin-filter-select">
-                            <option value="">All Types</option>
-                            <?php foreach ($weaponTypes as $type): ?>
-                            <option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
-                                <?php echo $type; ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div class="admin-filter-group">
-                        <label for="material" class="admin-filter-label">Material</label>
-                        <select id="material" name="material" class="admin-filter-select">
-                            <option value="">All Materials</option>
-                            <?php foreach ($weaponMaterials as $material): ?>
-                            <option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
-                                <?php echo $material; ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div class="admin-filter-group">
-                        <label for="grade" class="admin-filter-label">Grade</label>
-                        <select id="grade" name="grade" class="admin-filter-select">
-                            <option value="">All Grades</option>
-                            <?php foreach ($weaponGrades as $grade): ?>
-                            <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-                                <?php echo $grade; ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div class="admin-filter-actions">
-                        <input type="hidden" name="filter" value="1">
-                        <button type="submit" class="admin-button admin-button-primary">Apply Filters</button>
-                        <a href="index.php" class="admin-button admin-button-secondary">Reset</a>
-                    </div>
-                </form>
-            </div>
+            <!-- Filters -->
+			<div class="admin-filters">
+				<form action="index.php" method="get" class="admin-filter-form">
+					<div class="admin-filter-group">
+						<label for="search" class="admin-filter-label">Search</label>
+						<input type="text" id="search" name="search" class="admin-filter-input" value="<?php echo htmlspecialchars($searchTerm); ?>" placeholder="Search weapons...">
+					</div>
+					
+					<div class="admin-filter-group">
+						<label for="type" class="admin-filter-label">Weapon Type</label>
+						<select id="type" name="type" class="admin-filter-select">
+							<option value="">All Types</option>
+							<?php foreach ($weaponTypes as $type): ?>
+							<option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
+								<?php echo $type; ?>
+							</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					
+					<div class="admin-filter-group">
+						<label for="material" class="admin-filter-label">Material</label>
+						<select id="material" name="material" class="admin-filter-select">
+							<option value="">All Materials</option>
+							<?php foreach ($weaponMaterials as $material): ?>
+							<option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
+								<?php echo $material; ?>
+							</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					
+					<div class="admin-filter-group">
+						<label for="grade" class="admin-filter-label">Grade</label>
+						<select id="grade" name="grade" class="admin-filter-select">
+							<option value="">All Grades</option>
+							<?php foreach ($weaponGrades as $grade): ?>
+							<option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
+								<?php echo $grade; ?>
+							</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					
+					<div class="admin-filter-group">
+						<label for="has_bin" class="admin-filter-label">Bin Data</label>
+						<select id="has_bin" name="has_bin" class="admin-filter-select">
+							<option value="">All Items</option>
+							<option value="1" <?php echo (isset($filters['has_bin']) && $filters['has_bin'] == 1) ? 'selected' : ''; ?>>With Bin Data Only</option>
+						</select>
+					</div>
+					
+					<div class="admin-filter-actions">
+						<input type="hidden" name="filter" value="1">
+						<button type="submit" class="admin-button admin-button-primary">Apply Filters</button>
+						<a href="index.php" class="admin-button admin-button-secondary">Reset</a>
+					</div>
+				</form>
+			</div>
             
             <!-- Results Count -->
             <p class="admin-results-count">
@@ -248,54 +256,67 @@ include '../../includes/admin-header.php';
             </p>
             
             <!-- Weapons Table -->
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Icon</th>
-                            <th>Name (EN)</th>
-                            <th>Name (KR)</th>
-                            <th>Type</th>
-                            <th>Damage</th>
-                            <th>Grade</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($weapons['data'])): ?>
-                        <tr>
-                            <td colspan="8" class="admin-table-empty">No weapons found. Please try a different search or filter.</td>
-                        </tr>
-                        <?php else: ?>
-                            <?php foreach ($weapons['data'] as $weapon): ?>
-                            <tr>
-                                <td><?php echo $weapon['item_id']; ?></td>
-                                <td>
-                                    <img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars($weapon['desc_en']); ?>" class="admin-table-icon">
-                                </td>
-                                <td><?php echo htmlspecialchars($weapon['desc_en']); ?></td>
-                                <td><?php echo htmlspecialchars($weapon['desc_kr']); ?></td>
-                                <td><?php echo $weapon['type']; ?></td>
-                                <td><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></td>
-                                <td><?php echo $weapon['itemGrade']; ?></td>
-                                <td class="admin-actions">
-                                    <a href="../../public/weapons/detail.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-info" title="View">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="edit.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-primary" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="delete.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-danger" title="Delete">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+			<div class="admin-table-container">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Icon</th>
+							<th>Name (EN)</th>
+							<th>Name (KR)</th>
+							<th>Type</th>
+							<th>Damage</th>
+							<th>Grade</th>
+							<th>Bin</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php if (empty($weapons['data'])): ?>
+						<tr>
+							<td colspan="9" class="admin-table-empty">No weapons found. Please try a different search or filter.</td>
+						</tr>
+						<?php else: ?>
+							<?php foreach ($weapons['data'] as $weapon): ?>
+							<tr>
+								<td><?php echo $weapon['item_id']; ?></td>
+								<td>
+									<img src="<?php echo $weaponsModel->getWeaponIconUrl($weapon['iconId']); ?>" alt="<?php echo htmlspecialchars($weapon['desc_en']); ?>" class="admin-table-icon">
+								</td>
+								<td><?php echo htmlspecialchars($weapon['desc_en']); ?></td>
+								<td><?php echo htmlspecialchars($weapon['desc_kr']); ?></td>
+								<td><?php echo $weapon['type']; ?></td>
+								<td><?php echo $weapon['dmg_small']; ?>-<?php echo $weapon['dmg_large']; ?></td>
+								<td><?php echo $weapon['itemGrade']; ?></td>
+								<td>
+									<?php if ($weaponsModel->hasBinData($weapon['item_name_id'])): ?>
+									<span class="admin-badge admin-badge-success" title="Has bin data">✓</span>
+									<?php else: ?>
+									<span class="admin-badge admin-badge-secondary" title="No bin data">-</span>
+									<?php endif; ?>
+								</td>
+								<td class="admin-actions">
+									<a href="../../public/weapons/detail.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-info" title="View">
+										<i class="fas fa-eye"></i>
+									</a>
+									<a href="edit.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-primary" title="Edit">
+										<i class="fas fa-edit"></i>
+									</a>
+									<a href="delete.php?id=<?php echo $weapon['item_id']; ?>" class="admin-button admin-button-danger" title="Delete">
+										<i class="fas fa-trash-alt"></i>
+									</a>
+									<?php if ($weaponsModel->hasBinData($weapon['item_name_id'])): ?>
+									<a href="bin_data.php?name_id=<?php echo $weapon['item_name_id']; ?>" class="admin-button admin-button-warning" title="View Bin Data">
+										<i class="fas fa-database"></i>
+									</a>
+									<?php endif; ?>
+								</td>
+							</tr>
+							<?php endforeach; ?>
+						<?php endif; ?>
+					</tbody>
+				</table>
+			</div>
             
             <!-- Pagination -->
             <?php if ($weapons['total_pages'] > 1): ?>
@@ -339,29 +360,6 @@ include '../../includes/admin-header.php';
     </section>
 </main>
 
-<style>
-.admin-deletion-report {
-    margin-top: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 12px;
-    border-radius: var(--border-radius);
-}
-
-.admin-deletion-report ul {
-    margin: 8px 0;
-    padding-left: 20px;
-}
-
-.admin-deletion-report li {
-    margin-bottom: 4px;
-}
-
-.admin-deletion-total {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-</style>
 
 <?php
 // Include admin footer

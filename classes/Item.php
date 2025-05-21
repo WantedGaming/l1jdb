@@ -209,13 +209,58 @@ class Item {
         return $this->db->fetchAll($sql, [$limit]);
     }
     
-    // Get item icon URL
+    // Get item icon URL - Updated with correct path
     public function getItemIconUrl($iconId) {
-        return SITE_URL . '/assets/images/icons/items/' . $iconId . '.png';
+        return SITE_URL . '/assets/img/icons/' . $iconId . '.png';
     }
     
-    // Get item sprite URL
+    // Get item sprite URL - Updated with correct path
     public function getItemSpriteUrl($spriteId) {
-        return SITE_URL . '/assets/images/sprites/' . $spriteId . '.png';
+        return SITE_URL . '/assets/img/icons/' . $spriteId . '.png';
+    }
+    
+    // Get monsters that drop this item
+    public function getItemDrops($itemId) {
+        $sql = "SELECT d.mobId, d.mobname_en, d.moblevel, d.min, d.max, 
+                    d.chance, d.Enchant, n.spriteId, n.lvl, n.hp, 
+                    n.is_bossmonster  
+                FROM droplist d
+                JOIN npc n ON d.mobId = n.npcid 
+                WHERE d.itemId = ? 
+                ORDER BY d.chance DESC, n.lvl DESC";
+        return $this->db->fetchAll($sql, [$itemId]);
+    }
+
+    // Get monster sprite URL with PNG fallback to GIF
+    public function getMonsterSpriteUrl($spriteId) {
+        $pngPath = '/assets/img/icons/ms' . $spriteId . '.png';
+        $gifPath = '/assets/img/icons/ms' . $spriteId . '.gif';
+        
+        // Check if PNG exists first
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $pngPath)) {
+            return SITE_URL . '/' . $pngPath;
+        }
+        
+        // Fall back to GIF
+        return SITE_URL . '/' . $gifPath;
+    }
+    
+    // Format resistance name
+    public function formatResistName($resistName) {
+        $mapping = [
+            'regist_skill' => 'Skill Resistance',
+            'regist_spirit' => 'Spirit Resistance',
+            'regist_dragon' => 'Dragon Resistance',
+            'regist_fear' => 'Fear Resistance',
+            'regist_all' => 'All Resistance',
+            'hitup_skill' => 'Skill Hit',
+            'hitup_spirit' => 'Spirit Hit',
+            'hitup_dragon' => 'Dragon Hit',
+            'hitup_fear' => 'Fear Hit',
+            'hitup_all' => 'All Hit',
+            'hitup_magic' => 'Magic Hit'
+        ];
+        
+        return isset($mapping[$resistName]) ? $mapping[$resistName] : ucfirst(str_replace('_', ' ', $resistName));
     }
 }
