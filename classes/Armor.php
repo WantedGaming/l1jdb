@@ -215,19 +215,56 @@ class Armor {
         return $this->db->fetchAll($sql, [$limit]);
     }
     
+    // Get armor icon URL
     public function getArmorIconUrl($iconId) {
-    // For URL construction (browser access)
-    $iconPath = '/assets/img/icons/' . $iconId . '.png';
-    
-    // For file existence check (server filesystem)
-    $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $iconPath;
-    
-    // Check if icon exists
-    if ($iconId > 0 && file_exists($fullPath)) {
-        return SITE_URL . $iconPath;
-    } else {
-        return SITE_URL . '/assets/img/placeholders/0.png';
+        // For URL construction (browser access)
+        $iconPath = '/assets/img/icons/' . $iconId . '.png';
+        
+        // For file existence check (server filesystem)
+        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $iconPath;
+        
+        // Check if icon exists
+        if ($iconId > 0 && file_exists($fullPath)) {
+            return SITE_URL . $iconPath;
+        } else {
+            return SITE_URL . '/assets/img/placeholders/0.png';
+        }
     }
-}
     
+    // Get monsters that drop an armor
+    public function getMonstersThatDropArmor($armorId) {
+        $sql = "SELECT d.mobId, d.mobname_en, d.mobname_kr, d.moblevel, d.min, d.max, 
+                      d.chance, d.Enchant, n.spriteId, n.lvl, n.hp, 
+                      n.is_bossmonster  
+               FROM droplist d
+               JOIN npc n ON d.mobId = n.npcid 
+               WHERE d.itemId = ? 
+               ORDER BY d.chance DESC, n.lvl DESC";
+        return $this->db->fetchAll($sql, [$armorId]);
+    }
+    
+    // Get monster sprite URL with PNG fallback to GIF
+    public function getMonsterSpriteUrl($spriteId) {
+        $pngPath = '/assets/img/sprites/' . $spriteId . '.png';
+        $gifPath = '/assets/img/sprites/' . $spriteId . '.gif';
+        $msPath = '/assets/img/icons/ms' . $spriteId . '.png';
+        
+        // Check if PNG sprite exists first
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $pngPath)) {
+            return SITE_URL . $pngPath;
+        }
+        
+        // Then check if GIF sprite exists
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $gifPath)) {
+            return SITE_URL . $gifPath;
+        }
+        
+        // Finally check if ms icon exists
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $msPath)) {
+            return SITE_URL . $msPath;
+        }
+        
+        // Return placeholder if nothing exists
+        return SITE_URL . '/assets/img/placeholders/monster.png';
+    }
 }

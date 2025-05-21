@@ -83,7 +83,7 @@ include '../../includes/hero.php';
                             <option value="">All Types</option>
                             <?php foreach ($armorTypes as $type): ?>
                             <option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
-                                <?php echo $type; ?>
+                                <?php echo formatArmorType($type); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -107,7 +107,7 @@ include '../../includes/hero.php';
                             <option value="">All Grades</option>
                             <?php foreach ($armorGrades as $grade): ?>
                             <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-                                <?php echo $grade; ?>
+                                <?php echo formatArmorGrade($grade); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -145,8 +145,8 @@ include '../../includes/hero.php';
                     <div class="card item-card">
                         <a href="detail.php?id=<?php echo $armor['item_id']; ?>" class="card-link-overlay"></a>
                         <div class="card-header">
-                            <h3 class="card-header-title"><?php echo $armor['type']; ?></h3>
-                            <span class="card-badge"><?php echo $armor['itemGrade']; ?></span>
+                            <h3 class="card-header-title"><?php echo formatArmorType($armor['type']); ?></h3>
+                            <span class="card-badge"><?php echo formatArmorGrade($armor['itemGrade']); ?></span>
                         </div>
                         <div class="card-img-container">
                             <img src="<?php echo $armorModel->getArmorIconUrl($armor['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?>" class="card-img">

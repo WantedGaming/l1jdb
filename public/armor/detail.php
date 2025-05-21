@@ -38,12 +38,15 @@ if ($armor['Set_Id'] > 0) {
     $armorSetPieces = $armorModel->getArmorSetPieces($armor['Set_Id']);
 }
 
+// Get monsters that drop this armor
+$droppedBy = $armorModel->getMonstersThatDropArmor($armorId);
+
 // Set page title
 $pageTitle = cleanItemName($armor['desc_en']) . ' - Armor Details';
 
 // Include header
 $heroTitle = cleanItemName($armor['desc_en']);
-$heroSubtitle = $armor['type'];
+$heroSubtitle = formatArmorType($armor['type']);
 include '../../includes/header.php';
 include '../../includes/hero.php';
 ?>
@@ -68,7 +71,7 @@ include '../../includes/hero.php';
                 <!-- Title Card -->
                 <div class="detail-title-card">
                     <h1 class="detail-title"><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></h1>
-                    <p class="detail-category"><?php echo $armor['type']; ?> - <?php echo $armor['itemGrade']; ?> Grade</p>
+                    <p class="detail-category"><?php echo formatArmorType($armor['type']); ?> - <?php echo formatArmorGrade($armor['itemGrade']); ?> Grade</p>
                     <div class="detail-id">
                         <span>Item ID: <?php echo $armor['item_id']; ?></span>
                         <?php if ($armor['Set_Id'] > 0): ?>
@@ -103,7 +106,7 @@ include '../../includes/hero.php';
                             
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Type</span>
-                                <span class="detail-stat-value"><?php echo $armor['type']; ?></span>
+                                <span class="detail-stat-value"><?php echo formatArmorType($armor['type']); ?></span>
                             </div>
                             
                             <div class="detail-stat">
@@ -118,7 +121,7 @@ include '../../includes/hero.php';
                             
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Grade</span>
-                                <span class="detail-stat-value"><?php echo $armor['itemGrade']; ?></span>
+                                <span class="detail-stat-value"><?php echo formatArmorGrade($armor['itemGrade']); ?></span>
                             </div>
                             
                             <?php if (isset($armor['safenchant']) && $armor['safenchant'] > 0): ?>
@@ -429,12 +432,12 @@ include '../../includes/hero.php';
                     <?php if (!empty($armorSetPieces)): ?>
                     <div class="detail-stats-card">
                         <h4 class="detail-stat-title">Set Pieces</h4>
-                        <div class="card-grid" style="margin-top: 20px;">
+                        <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
                             <?php foreach ($armorSetPieces as $setPiece): ?>
-                            <div class="card item-card" style="max-width: 200px;">
+                            <div class="card item-card">
                                 <a href="detail.php?id=<?php echo $setPiece['item_id']; ?>" class="card-link-overlay"></a>
                                 <div class="card-header">
-                                    <h3 class="card-header-title"><?php echo $setPiece['type']; ?></h3>
+                                    <h3 class="card-header-title"><?php echo formatArmorType($setPiece['type']); ?></h3>
                                 </div>
                                 <div class="card-img-container">
                                     <img src="<?php echo $armorModel->getArmorIconUrl($setPiece['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($setPiece['desc_en'])); ?>" class="card-img">
@@ -576,6 +579,52 @@ include '../../includes/hero.php';
                     </div>
                 </div>
                 <?php endif; ?>
+                
+                <!-- Dropped By Section -->
+                <div class="detail-drops-section">
+                    <h3 class="detail-stat-title">Dropped By</h3>
+                    <?php
+                    if (empty($droppedBy)):
+                    ?>
+                    <div class="detail-drops-content">
+                        <p class="detail-placeholder-text">This armor is not dropped by any monsters.</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="monster-drop-table">
+                        <table class="drop-table">
+                            <thead>
+                                <tr>
+                                    <th class="drop-table-monster">Monster</th>
+                                    <th class="drop-table-level">Level</th>
+                                    <th class="drop-table-chance">Drop Rate</th>
+                                    <th class="drop-table-amount">Amount</th>
+                                    <?php if (array_filter($droppedBy, function($d) { return $d['Enchant'] > 0; })): ?>
+                                    <th class="drop-table-enchant">Enchant</th>
+                                    <?php endif; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($droppedBy as $drop): ?>
+                                <tr class="<?php echo $drop['is_bossmonster'] == 'true' ? 'drop-row-boss' : ''; ?>">
+                                    <td class="drop-table-monster">
+                                        <div class="monster-info">
+                                            <img src="<?php echo $armorModel->getMonsterSpriteUrl($drop['spriteId']); ?>" alt="<?php echo htmlspecialchars($drop['mobname_en']); ?>" class="monster-sprite">
+                                            <span class="monster-name"><?php echo htmlspecialchars($drop['mobname_en']); ?><?php echo $drop['is_bossmonster'] == 'true' ? ' <span class="boss-tag">Boss</span>' : ''; ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="drop-table-level"><?php echo $drop['lvl']; ?></td>
+                                    <td class="drop-table-chance"><?php echo number_format($drop['chance'] / 1000, 2); ?>%</td>
+                                    <td class="drop-table-amount"><?php echo $drop['min'] == $drop['max'] ? $drop['min'] : $drop['min'] . '-' . $drop['max']; ?></td>
+                                    <?php if (array_filter($droppedBy, function($d) { return $d['Enchant'] > 0; })): ?>
+                                    <td class="drop-table-enchant"><?php echo $drop['Enchant'] > 0 ? '+' . $drop['Enchant'] : '-'; ?></td>
+                                    <?php endif; ?>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php endif; ?>
+                </div>
                 
                 <!-- Back to list button -->
                 <div class="detail-footer">

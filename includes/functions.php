@@ -40,6 +40,39 @@ function formatWeaponType($type) {
 }
 
 /**
+ * Format armor type to make it more readable
+ * 
+ * @param string $type The armor type from database
+ * @return string Formatted armor type
+ */
+function formatArmorType($type) {
+    // List of armor types that need special formatting
+    $specialTypes = [
+        'AMULET' => 'Amulet',
+        'ARMOR' => 'Armor',
+        'BELT' => 'Belt',
+        'BOOTS' => 'Boots',
+        'BOW' => 'Bow',
+        'BRACER' => 'Bracer',
+        'CLOAK' => 'Cloak',
+        'GLOVE' => 'Glove',
+        'GUARDER' => 'Guarder',
+        'HELM' => 'Helm',
+        'RING' => 'Ring',
+        'SHIELD' => 'Shield',
+        'T_SHIRT' => 'T-Shirt'
+    ];
+    
+    // Check if it's a special type
+    if (isset($specialTypes[strtoupper($type)])) {
+        return $specialTypes[strtoupper($type)];
+    }
+    
+    // For types not in the special list, just capitalize first letter of each word
+    return ucwords(strtolower(str_replace('_', ' ', $type)));
+}
+
+/**
  * Format material to remove Korean text in parentheses and normalize
  * 
  * @param string $material The material from database
@@ -77,6 +110,34 @@ function formatMaterial($material) {
     // For materials not in the special list, just capitalize first letter of each word
     return ucwords(strtolower($material));
 }
+
+/**
+ * Format armor grade to make it more readable
+ * 
+ * @param string $grade The armor grade from database
+ * @return string Formatted armor grade
+ */
+function formatArmorGrade($grade) {
+    // List of armor grades that need special formatting
+    $gradeMap = [
+        'NORMAL' => 'Normal',
+        'ADVANC' => 'Advanced',
+        'RARE' => 'Rare',
+        'HERO' => 'Hero',
+        'LEGEND' => 'Legend',
+        'MYTH' => 'Myth',
+        'ONLY' => 'Unique'
+    ];
+    
+    // Check if it's a known grade
+    if (isset($gradeMap[$grade])) {
+        return $gradeMap[$grade];
+    }
+    
+    // For grades not in the map, just capitalize first letter
+    return ucfirst(strtolower($grade));
+}
+
 /**
  * Clean item name by removing prefix codes
  * 
