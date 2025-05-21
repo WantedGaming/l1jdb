@@ -215,13 +215,19 @@ class Armor {
         return $this->db->fetchAll($sql, [$limit]);
     }
     
-    // Get armor icon URL
     public function getArmorIconUrl($iconId) {
-        return SITE_URL . '/assets/images/icons/items/' . $iconId . '.png';
-    }
+    // For URL construction (browser access)
+    $iconPath = '/assets/img/icons/' . $iconId . '.png';
     
-    // Get armor sprite URL
-    public function getArmorSpriteUrl($spriteId) {
-        return SITE_URL . '/assets/images/sprites/' . $spriteId . '.png';
+    // For file existence check (server filesystem)
+    $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $iconPath;
+    
+    // Check if icon exists
+    if ($iconId > 0 && file_exists($fullPath)) {
+        return SITE_URL . $iconPath;
+    } else {
+        return SITE_URL . '/assets/img/placeholders/0.png';
     }
+}
+    
 }
