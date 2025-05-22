@@ -1,0 +1,511 @@
+# Functions.php Reference Documentation
+
+This document provides comprehensive documentation for all global utility functions available in `/includes/functions.php`.
+
+## Table of Contents
+
+1. [Item Formatting Functions](#item-formatting-functions)
+2. [Image and Icon Functions](#image-and-icon-functions)
+3. [Database Utility Functions](#database-utility-functions)
+4. [Resistance and Attribute Functions](#resistance-and-attribute-functions)
+5. [Item Filtering Utility Functions](#item-filtering-utility-functions)
+6. [Display Utility Functions](#display-utility-functions)
+7. [Pagination Utility Functions](#pagination-utility-functions)
+8. [Debugging and Logging Functions](#debugging-and-logging-functions)
+
+---
+
+## Item Formatting Functions
+
+### `formatWeaponType($type)`
+Formats weapon type strings to make them more readable.
+
+**Parameters:**
+- `$type` (string): Raw weapon type from database
+
+**Returns:** `string` - Formatted weapon type
+
+**Example:**
+```php
+echo formatWeaponType('TOHAND_SWORD'); // Output: "Sword (2H)"
+echo formatWeaponType('SINGLE_BOW');   // Output: "Bow (1H)"
+```
+
+---
+
+### `formatArmorType($type)`
+Formats armor type strings to make them more readable.
+
+**Parameters:**
+- `$type` (string): Raw armor type from database
+
+**Returns:** `string` - Formatted armor type
+
+**Example:**
+```php
+echo formatArmorType('T_SHIRT'); // Output: "T-Shirt"
+echo formatArmorType('HELM');    // Output: "Helm"
+```
+
+---
+
+### `formatMaterial($material)`
+Formats material strings by removing Korean text and normalizing.
+
+**Parameters:**
+- `$material` (string): Raw material from database
+
+**Returns:** `string` - Formatted material
+
+**Example:**
+```php
+echo formatMaterial('IRON(철)');     // Output: "Iron"
+echo formatMaterial('MITHRIL(미스릴)'); // Output: "Mithril"
+```
+
+---
+
+### `formatArmorGrade($grade)`
+Formats armor/item grade to make it more readable.
+
+**Parameters:**
+- `$grade` (string): Raw grade from database
+
+**Returns:** `string` - Formatted grade
+
+**Example:**
+```php
+echo formatArmorGrade('ADVANC'); // Output: "Advanced"
+echo formatArmorGrade('ONLY');   // Output: "Unique"
+```
+
+---
+
+### `cleanItemName($name)`
+Removes color prefix codes from item names.
+
+**Parameters:**
+- `$name` (string): Raw item name from database
+
+**Returns:** `string` - Cleaned item name
+
+**Example:**
+```php
+echo cleanItemName('\aHDemon Sword'); // Output: "Demon Sword"
+echo cleanItemName('\f4Magic Ring');  // Output: "Magic Ring"
+```
+
+---
+
+## Image and Icon Functions
+
+### `getItemIconUrl($iconId)`
+Gets the complete URL for an item icon with fallback to placeholder.
+
+**Parameters:**
+- `$iconId` (int): Icon ID from database
+
+**Returns:** `string` - Complete URL to icon
+
+**Example:**
+```php
+echo getItemIconUrl(1234); // Output: "https://yoursite.com/assets/img/icons/1234.png"
+echo getItemIconUrl(0);    // Output: "https://yoursite.com/assets/img/placeholders/0.png"
+```
+
+---
+
+### `getItemSpriteUrl($spriteId)`
+Gets the complete URL for an item sprite.
+
+**Parameters:**
+- `$spriteId` (int): Sprite ID from database
+
+**Returns:** `string` - Complete URL to sprite
+
+**Example:**
+```php
+echo getItemSpriteUrl(5678); // Output: "https://yoursite.com/assets/img/sprites/5678.png"
+```
+
+---
+
+### `getMonsterSpriteUrl($spriteId)`
+Gets monster sprite URL with PNG fallback to GIF and ms icon.
+
+**Parameters:**
+- `$spriteId` (int): Monster sprite ID
+
+**Returns:** `string` - Complete URL to monster sprite
+
+**Example:**
+```php
+echo getMonsterSpriteUrl(123); // Tries PNG, then GIF, then ms123.png, then placeholder
+```
+
+---
+
+## Database Utility Functions
+
+### `getItemDrops($itemId, $db)`
+Gets monsters that drop a specific item.
+
+**Parameters:**
+- `$itemId` (int): Item ID to check drops for
+- `$db` (Database): Database instance
+
+**Returns:** `array` - Array of drop information
+
+**Example:**
+```php
+$db = Database::getInstance();
+$drops = getItemDrops(1234, $db);
+foreach ($drops as $drop) {
+    echo $drop['mobname_en'] . " drops this item\n";
+}
+```
+
+---
+
+### `hasBinData($nameId, $db)`
+Checks if an item has binary data available.
+
+**Parameters:**
+- `$nameId` (int): Name ID to check
+- `$db` (Database): Database instance
+
+**Returns:** `bool` - Whether bin data exists
+
+**Example:**
+```php
+$db = Database::getInstance();
+if (hasBinData(1234, $db)) {
+    echo "This item has binary data available";
+}
+```
+
+---
+
+### `getBinItemData($nameId, $db)`
+Gets binary item data for a specific name ID.
+
+**Parameters:**
+- `$nameId` (int): Name ID to get data for
+- `$db` (Database): Database instance
+
+**Returns:** `array|null` - Bin data or null if not found
+
+**Example:**
+```php
+$db = Database::getInstance();
+$binData = getBinItemData(1234, $db);
+if ($binData) {
+    echo "Found bin data for item";
+}
+```
+
+---
+
+## Resistance and Attribute Functions
+
+### `formatResistanceName($resistName)`
+Formats resistance field names for display.
+
+**Parameters:**
+- `$resistName` (string): Resistance field name
+
+**Returns:** `string` - Formatted resistance name
+
+**Example:**
+```php
+echo formatResistanceName('regist_skill');  // Output: "Skill Resistance"
+echo formatResistanceName('hitup_dragon');  // Output: "Dragon Hit"
+```
+
+---
+
+### `getClassRestrictions($item)`
+Gets formatted class restrictions for an item.
+
+**Parameters:**
+- `$item` (array): Item data with use_* fields
+
+**Returns:** `array` - Array of class restrictions
+
+**Example:**
+```php
+$restrictions = getClassRestrictions($weapon);
+foreach ($restrictions as $class => $data) {
+    echo $data['name'] . ": " . ($data['can_use'] ? 'Can' : 'Cannot') . " use\n";
+}
+```
+
+---
+
+## Item Filtering Utility Functions
+
+### `getGradeOrder()`
+Gets the proper order for item grades.
+
+**Parameters:** None
+
+**Returns:** `array` - Grade order array
+
+**Example:**
+```php
+$order = getGradeOrder(); // ['ONLY', 'MYTH', 'LEGEND', 'HERO', 'RARE', 'ADVANC', 'NORMAL']
+```
+
+---
+
+### `getGradeOrderSql($table)`
+Generates SQL for ordering by grade.
+
+**Parameters:**
+- `$table` (string): Optional table name prefix
+
+**Returns:** `string` - SQL ORDER BY clause
+
+**Example:**
+```php
+$sql = "SELECT * FROM weapon ORDER BY " . getGradeOrderSql('weapon');
+```
+
+---
+
+### `getDistinctValues($db, $table, $column, $where, $params, $orderBy)`
+Gets distinct values from a table column.
+
+**Parameters:**
+- `$db` (Database): Database instance
+- `$table` (string): Table name
+- `$column` (string): Column name
+- `$where` (string): Optional WHERE clause
+- `$params` (array): Optional parameters
+- `$orderBy` (string): Optional ORDER BY clause
+
+**Returns:** `array` - Array of distinct values
+
+**Example:**
+```php
+$db = Database::getInstance();
+$types = getDistinctValues($db, 'weapon', 'type');
+```
+
+---
+
+## Display Utility Functions
+
+### `formatStatBonus($value)`
+Formats stat bonuses with + prefix for positive values.
+
+**Parameters:**
+- `$value` (int): Stat value
+
+**Returns:** `string` - Formatted stat value
+
+**Example:**
+```php
+echo formatStatBonus(5);   // Output: "+5"
+echo formatStatBonus(-3);  // Output: "-3"
+echo formatStatBonus(0);   // Output: "—"
+```
+
+---
+
+### `formatPercentage($value, $decimals)`
+Formats percentage values.
+
+**Parameters:**
+- `$value` (float): Percentage value
+- `$decimals` (int): Number of decimal places (default: 1)
+
+**Returns:** `string` - Formatted percentage
+
+**Example:**
+```php
+echo formatPercentage(25.5, 1);  // Output: "25.5%"
+echo formatPercentage(0, 0);     // Output: "—"
+```
+
+---
+
+### `formatDamageRange($small, $large)`
+Formats damage range display.
+
+**Parameters:**
+- `$small` (int): Small damage value
+- `$large` (int): Large damage value
+
+**Returns:** `string` - Formatted damage range
+
+**Example:**
+```php
+echo formatDamageRange(10, 15); // Output: "10 - 15"
+echo formatDamageRange(0, 0);   // Output: "—"
+```
+
+---
+
+### `hasStatBonuses($item, $stats)`
+Checks if item has any stat bonuses.
+
+**Parameters:**
+- `$item` (array): Item data
+- `$stats` (array): Optional array of stat fields to check
+
+**Returns:** `bool` - Whether any stat bonuses exist
+
+**Example:**
+```php
+if (hasStatBonuses($weapon)) {
+    echo "This weapon has stat bonuses";
+}
+```
+
+---
+
+### `hasResistances($item, $resistances)`
+Checks if item has any resistances.
+
+**Parameters:**
+- `$item` (array): Item data
+- `$resistances` (array): Optional array of resistance fields to check
+
+**Returns:** `bool` - Whether any resistances exist
+
+**Example:**
+```php
+if (hasResistances($armor)) {
+    echo "This armor has resistances";
+}
+```
+
+---
+
+## Pagination Utility Functions
+
+### `getPaginationUrl($page, $params)`
+Generates pagination URL with preserved parameters.
+
+**Parameters:**
+- `$page` (int): Page number
+- `$params` (array): Additional parameters to preserve
+
+**Returns:** `string` - Generated URL
+
+**Example:**
+```php
+$url = getPaginationUrl(2, ['search' => 'sword', 'type' => 'weapon']);
+// Output: "?page=2&search=sword&type=weapon"
+```
+
+---
+
+### `getPaginationInfo($currentPage, $perPage, $totalItems)`
+Generates pagination info text.
+
+**Parameters:**
+- `$currentPage` (int): Current page number
+- `$perPage` (int): Items per page
+- `$totalItems` (int): Total number of items
+
+**Returns:** `string` - Pagination info text
+
+**Example:**
+```php
+echo getPaginationInfo(2, 20, 150); // Output: "Showing 21 to 40 of 150 items"
+```
+
+---
+
+## Debugging and Logging Functions
+
+### `logQuery($query, $params, $executionTime)`
+Logs database queries for debugging (when DEBUG_QUERIES is enabled).
+
+**Parameters:**
+- `$query` (string): SQL query
+- `$params` (array): Query parameters (default: [])
+- `$executionTime` (float): Execution time in seconds (default: 0)
+
+**Returns:** `void`
+
+**Example:**
+```php
+logQuery("SELECT * FROM weapon WHERE type = ?", ['SWORD'], 0.002);
+```
+
+---
+
+### `generateCacheKey($prefix, $params)`
+Generates a cache key for database results.
+
+**Parameters:**
+- `$prefix` (string): Cache key prefix
+- `$params` (array): Parameters to include in cache key (default: [])
+
+**Returns:** `string` - Generated cache key
+
+**Example:**
+```php
+$key = generateCacheKey('weapons', ['type' => 'SWORD', 'grade' => 'HERO']);
+// Output: "weapons_a1b2c3d4e5f6..." (MD5 hash)
+```
+
+---
+
+## Usage Notes
+
+### Best Practices
+
+1. **Always include functions.php** in your pages:
+   ```php
+   require_once __DIR__ . '/../../includes/functions.php';
+   ```
+
+2. **Use Database instance for functions that need it**:
+   ```php
+   $db = Database::getInstance();
+   $drops = getItemDrops($itemId, $db);
+   ```
+
+3. **Check return values** for functions that might return null:
+   ```php
+   $binData = getBinItemData($nameId, $db);
+   if ($binData) {
+       // Process bin data
+   }
+   ```
+
+4. **Use utility functions** to reduce code duplication:
+   ```php
+   // Instead of manual checking
+   if (hasStatBonuses($item)) {
+       // Show stats section
+   }
+   ```
+
+### Dependencies
+
+- These functions require the following to be available:
+  - `SITE_URL` constant
+  - `Database` class
+  - Proper file structure in `/assets/img/`
+
+### File Structure Expected
+
+```
+/assets/img/
+├── icons/           # Item icons (PNG format)
+├── sprites/         # Monster/item sprites (PNG/GIF)
+└── placeholders/    # Fallback images
+    ├── 0.png        # Default item placeholder
+    ├── sprite.png   # Default sprite placeholder
+    └── monster.png  # Default monster placeholder
+```
+
+---
+
+*Last updated: [Current Date]*  
+*Version: 1.0*
