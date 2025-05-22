@@ -124,7 +124,7 @@ include '../../includes/hero.php';
                             <option value="">All Grades</option>
                             <?php foreach ($itemGrades as $grade): ?>
                             <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-                                <?php echo formatArmorGrade($grade); ?>
+                                <?php echo formatGrade($grade); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -155,7 +155,7 @@ include '../../includes/hero.php';
                         <a href="detail.php?id=<?php echo $item['item_id']; ?>" class="card-link-overlay"></a>
                         <div class="card-header">
                             <h3 class="card-header-title"><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?></h3>
-                            <span class="card-badge"><?php echo formatArmorGrade($item['itemGrade']); ?></span>
+                            <span class="card-badge"><?php echo formatGrade($item['itemGrade']); ?></span>
                         </div>
                         <div class="card-img-container">
                             <img src="<?php echo getItemIconUrl($item['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($item['desc_en'])); ?>" class="card-img">

@@ -4,6 +4,7 @@ require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../classes/User.php';
 require_once '../../classes/Armor.php';
+require_once '../../includes/functions.php';
 
 // Initialize session
 init_session();
@@ -66,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
 }
 
 // Set page title
-$pageTitle = "Confirm Delete: " . $armor['desc_en'];
+$pageTitle = "Confirm Delete: " . cleanItemName($armor['desc_en']);
 
 // Include admin header
 include '../../includes/admin-header.php';
@@ -101,7 +102,7 @@ include '../../includes/admin-header.php';
                     
                     <div class="admin-delete-content">
                         <p class="admin-delete-message">
-                            Are you sure you want to delete the armor <strong><?php echo htmlspecialchars($armor['desc_en']); ?></strong>?
+                            Are you sure you want to delete the armor <strong><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></strong>?
                             This action cannot be undone.
                         </p>
                         
@@ -112,15 +113,15 @@ include '../../includes/admin-header.php';
                             </div>
                             <div class="admin-delete-detail">
                                 <span class="admin-delete-label">Name (EN):</span>
-                                <span class="admin-delete-value"><?php echo htmlspecialchars($armor['desc_en']); ?></span>
+                                <span class="admin-delete-value"><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></span>
                             </div>
                             <div class="admin-delete-detail">
                                 <span class="admin-delete-label">Name (KR):</span>
-                                <span class="admin-delete-value"><?php echo htmlspecialchars($armor['desc_kr']); ?></span>
+                                <span class="admin-delete-value"><?php echo htmlspecialchars(cleanItemName($armor['desc_kr'])); ?></span>
                             </div>
                             <div class="admin-delete-detail">
                                 <span class="admin-delete-label">Type:</span>
-                                <span class="admin-delete-value"><?php echo $armor['type']; ?></span>
+                                <span class="admin-delete-value"><?php echo formatArmorType($armor['type']); ?></span>
                             </div>
                             <div class="admin-delete-detail">
                                 <span class="admin-delete-label">AC:</span>
@@ -128,7 +129,7 @@ include '../../includes/admin-header.php';
                             </div>
                             <div class="admin-delete-detail">
                                 <span class="admin-delete-label">Grade:</span>
-                                <span class="admin-delete-value"><?php echo $armor['itemGrade']; ?></span>
+                                <span class="admin-delete-value"><?php echo formatGrade($armor['itemGrade']); ?></span>
                             </div>
                             <?php if ($armor['Set_Id'] > 0): ?>
                             <div class="admin-delete-detail">

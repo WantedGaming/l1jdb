@@ -71,7 +71,7 @@ include '../../includes/hero.php';
                 <!-- Title Card -->
                 <div class="detail-title-card">
                     <h1 class="detail-title"><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></h1>
-                    <p class="detail-category"><?php echo formatArmorType($armor['type']); ?> - <?php echo formatArmorGrade($armor['itemGrade']); ?> Grade</p>
+                    <p class="detail-category"><?php echo formatArmorType($armor['type']); ?> - <?php echo formatGrade($armor['itemGrade']); ?> Grade</p>
                     <div class="detail-id">
                         <span>Item ID: <?php echo $armor['item_id']; ?></span>
                         <?php if ($armor['Set_Id'] > 0): ?>
@@ -121,7 +121,7 @@ include '../../includes/hero.php';
                             
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Grade</span>
-                                <span class="detail-stat-value"><?php echo formatArmorGrade($armor['itemGrade']); ?></span>
+                                <span class="detail-stat-value"><?php echo formatGrade($armor['itemGrade']); ?></span>
                             </div>
                             
                             <?php if (isset($armor['safenchant']) && $armor['safenchant'] > 0): ?>

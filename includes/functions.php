@@ -118,7 +118,7 @@ function formatMaterial($material) {
  * @param string $grade The armor grade from database
  * @return string Formatted armor grade
  */
-function formatArmorGrade($grade) {
+function formatGrade($grade) {
     // List of armor grades that need special formatting
     $gradeMap = [
         'NORMAL' => 'Normal',

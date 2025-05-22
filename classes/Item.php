@@ -78,6 +78,11 @@ class Item {
             $params[] = $filters['max_charge_count'];
         }
         
+        // Add bin data filter
+        if (isset($filters['has_bin']) && $filters['has_bin'] == 1) {
+            $conditions[] = 'EXISTS (SELECT 1 FROM bin_item_common WHERE name_id = etcitem.item_name_id)';
+        }
+        
         $conditionSql = implode(' AND ', $conditions);
         
         return $this->db->paginate(
@@ -263,4 +268,52 @@ class Item {
         
         return isset($mapping[$resistName]) ? $mapping[$resistName] : ucfirst(str_replace('_', ' ', $resistName));
     }
+    
+    /**
+     * Check if item has bin data
+     * @param int $nameId
+     * @return bool
+     */
+    public function hasBinData($nameId) {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM bin_item_common WHERE name_id = ?";
+            $result = $this->db->fetchOne($sql, [$nameId]);
+            
+            return $result['count'] > 0;
+        } catch (Exception $e) {
+            error_log("Error checking bin data: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Get bin item data by name ID
+     * @param int $nameId
+     * @return array|null
+     */
+    public function getBinItemData($nameId) {
+        try {
+            $sql = "SELECT * FROM bin_item_common WHERE name_id = ?";
+            return $this->db->fetchOne($sql, [$nameId]);
+        } catch (Exception $e) {
+            error_log("Error getting bin item data: " . $e->getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Get all items by name ID
+     * @param int $nameId
+     * @return array
+     */
+    public function getItemsByNameId($nameId) {
+        try {
+            $sql = "SELECT * FROM etcitem WHERE item_name_id = ? ORDER BY item_id";
+            return $this->db->fetchAll($sql, [$nameId]);
+        } catch (Exception $e) {
+            error_log("Error getting items by name ID: " . $e->getMessage());
+            return [];
+        }
+    }
 }
+?>

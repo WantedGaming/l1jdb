@@ -4,6 +4,7 @@ require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../classes/User.php';
 require_once '../../classes/Weapon.php';
+require_once '../../classes/functions.php';
 
 // Initialize session
 init_session();

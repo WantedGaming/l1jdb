@@ -1,9 +1,9 @@
 <?php
-// Admin bin_item_common detail view
+// Admin bin_item_common detail view for items
 require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../classes/User.php';
-require_once '../../classes/Armor.php';
+require_once '../../classes/Item.php';
 require_once '../../includes/functions.php';
 
 // Initialize session
@@ -18,14 +18,14 @@ if (!$user->isAdmin()) {
     exit;
 }
 
-// Initialize armor model
-$armorModel = new Armor();
+// Initialize item model
+$itemModel = new Item();
 
 // Get name ID from URL
 $nameId = isset($_GET['name_id']) ? (int)$_GET['name_id'] : 0;
 
 // Get bin data
-$binData = $armorModel->getBinItemData($nameId);
+$binData = $itemModel->getBinItemData($nameId);
 
 // If bin data not found, redirect to list page
 if (!$binData) {
@@ -33,8 +33,8 @@ if (!$binData) {
     exit;
 }
 
-// Get all armor items related to this bin data
-$relatedArmor = $armorModel->getArmorByNameId($nameId);
+// Get all items related to this bin data
+$relatedItems = $itemModel->getItemsByNameId($nameId);
 
 // Set page title
 $pageTitle = "Bin Data: ID " . $nameId;
@@ -51,7 +51,7 @@ include '../../includes/admin-header.php';
                 <h1 class="admin-page-title"><?php echo $pageTitle; ?></h1>
                 <div class="admin-header-buttons">
                     <a href="index.php" class="admin-button admin-button-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to Armor
+                        <i class="fas fa-arrow-left"></i> Back to Items
                     </a>
                 </div>
             </div>
@@ -71,7 +71,7 @@ include '../../includes/admin-header.php';
                         <div class="admin-detail-value">
                             <?php echo $binData['icon_id']; ?>
                             <?php if (!empty($binData['icon_id'])): ?>
-                            <img src="<?php echo $armorModel->getArmorIconUrl($binData['icon_id']); ?>" alt="Icon" class="admin-detail-icon">
+                            <img src="<?php echo getItemIconUrl($binData['icon_id']); ?>" alt="Icon" class="admin-detail-icon">
                             <?php endif; ?>
                         </div>
                     </div>
@@ -88,12 +88,12 @@ include '../../includes/admin-header.php';
                     
                     <div class="admin-detail-row">
                         <div class="admin-detail-label">Real Description</div>
-                        <div class="admin-detail-value"><?php echo htmlspecialchars(cleanItemName($binData['real_desc'] ?? 'None')); ?></div>
+                        <div class="admin-detail-value"><?php echo htmlspecialchars($binData['real_desc'] ?? 'None'); ?></div>
                     </div>
                     
                     <div class="admin-detail-row">
                         <div class="admin-detail-label">Korean Description</div>
-                        <div class="admin-detail-value"><?php echo htmlspecialchars(cleanItemName($binData['desc_kr'] ?? 'None')); ?></div>
+                        <div class="admin-detail-value"><?php echo htmlspecialchars($binData['desc_kr'] ?? 'None'); ?></div>
                     </div>
                     
                     <div class="admin-detail-row">
@@ -117,16 +117,6 @@ include '../../includes/admin-header.php';
                             Min: <?php echo $binData['level_limit_min']; ?> 
                             Max: <?php echo $binData['level_limit_max']; ?>
                         </div>
-                    </div>
-                    
-                    <div class="admin-detail-row">
-                        <div class="admin-detail-label">Body Part</div>
-                        <div class="admin-detail-value"><?php echo formatArmorType($binData['body_part']); ?></div>
-                    </div>
-                    
-                    <div class="admin-detail-row">
-                        <div class="admin-detail-label">AC</div>
-                        <div class="admin-detail-value"><?php echo $binData['ac']; ?></div>
                     </div>
                     
                     <div class="admin-detail-row">
@@ -223,13 +213,6 @@ include '../../includes/admin-header.php';
                 </div>
                 <?php endif; ?>
                 
-                <?php if (!empty($binData['armor_series_info'])): ?>
-                <div class="admin-detail-section">
-                    <h3 class="admin-detail-subtitle">Armor Series Info</h3>
-                    <pre class="admin-detail-code"><?php echo htmlspecialchars($binData['armor_series_info']); ?></pre>
-                </div>
-                <?php endif; ?>
-                
                 <?php if (!empty($binData['lucky_bag_reward_list'])): ?>
                 <div class="admin-detail-section">
                     <h3 class="admin-detail-subtitle">Lucky Bag Reward List</h3>
@@ -238,10 +221,10 @@ include '../../includes/admin-header.php';
                 <?php endif; ?>
             </div>
             
-            <!-- Related Armor Items -->
-            <?php if (!empty($relatedArmor)): ?>
+            <!-- Related Items -->
+            <?php if (!empty($relatedItems)): ?>
             <div class="admin-related-section">
-                <h2 class="admin-section-title">Related Armor Items</h2>
+                <h2 class="admin-section-title">Related Items</h2>
                 
                 <div class="admin-table-container">
                     <table class="admin-table">
@@ -252,26 +235,28 @@ include '../../includes/admin-header.php';
                                 <th>Name (EN)</th>
                                 <th>Name (KR)</th>
                                 <th>Type</th>
+                                <th>Use Type</th>
                                 <th>Grade</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($relatedArmor as $armor): ?>
+                            <?php foreach ($relatedItems as $item): ?>
                             <tr>
-                                <td><?php echo $armor['item_id']; ?></td>
+                                <td><?php echo $item['item_id']; ?></td>
                                 <td>
-                                    <img src="<?php echo $armorModel->getArmorIconUrl($armor['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?>" class="admin-table-icon">
+                                    <img src="<?php echo getItemIconUrl($item['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($item['desc_en'])); ?>" class="admin-table-icon">
                                 </td>
-                                <td><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></td>
-                                <td><?php echo htmlspecialchars(cleanItemName($armor['desc_kr'])); ?></td>
-                                <td><?php echo formatArmorType($armor['type']); ?></td>
-                                <td><?php echo formatGrade($armor['itemGrade']); ?></td>
+                                <td><?php echo htmlspecialchars(cleanItemName($item['desc_en'])); ?></td>
+                                <td><?php echo htmlspecialchars(cleanItemName($item['desc_kr'] ?? 'N/A')); ?></td>
+                                <td><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?></td>
+                                <td><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['use_type']))); ?></td>
+                                <td><?php echo formatArmorGrade($item['itemGrade']); ?></td>
                                 <td class="admin-actions">
-                                    <a href="../../public/armor/detail.php?id=<?php echo $armor['item_id']; ?>" class="admin-button admin-button-info" title="View">
+                                    <a href="../../public/items/detail.php?id=<?php echo $item['item_id']; ?>" class="admin-button admin-button-info" title="View">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="edit.php?id=<?php echo $armor['item_id']; ?>" class="admin-button admin-button-primary" title="Edit">
+                                    <a href="edit.php?id=<?php echo $item['item_id']; ?>" class="admin-button admin-button-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </td>

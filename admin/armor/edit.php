@@ -4,6 +4,7 @@ require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../classes/User.php';
 require_once '../../classes/Armor.php';
+require_once '../../includes/functions.php';
 
 // Initialize session
 init_session();
@@ -161,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Set page title
-$pageTitle = "Edit Armor: " . $armor['desc_en'];
+$pageTitle = "Edit Armor: " . cleanItemName($armor['desc_en']);
 
 // Get armor types and grades for dropdowns
 $armorTypes = $armorModel->getArmorTypes();
@@ -240,7 +241,7 @@ include '../../includes/admin-header.php';
                                         <select id="type" name="type" class="admin-form-select" required>
                                             <?php foreach ($armorTypes as $type): ?>
                                             <option value="<?php echo $type; ?>" <?php echo ($armor['type'] === $type) ? 'selected' : ''; ?>>
-                                                <?php echo $type; ?>
+                                                <?php echo formatArmorType($type); ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -251,7 +252,7 @@ include '../../includes/admin-header.php';
                                         <select id="itemGrade" name="itemGrade" class="admin-form-select" required>
                                             <?php foreach ($armorGrades as $grade): ?>
                                             <option value="<?php echo $grade; ?>" <?php echo ($armor['itemGrade'] === $grade) ? 'selected' : ''; ?>>
-                                                <?php echo $grade; ?>
+                                                <?php echo formatGrade($grade); ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -264,7 +265,7 @@ include '../../includes/admin-header.php';
                                         <select id="material" name="material" class="admin-form-select" required>
                                             <?php foreach ($armorMaterials as $material): ?>
                                             <option value="<?php echo $material; ?>" <?php echo ($armor['material'] === $material) ? 'selected' : ''; ?>>
-                                                <?php echo $material; ?>
+                                                <?php echo formatMaterial($material); ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>

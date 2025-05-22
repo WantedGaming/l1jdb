@@ -66,7 +66,7 @@ include '../../includes/hero.php';
                 <!-- Title Card -->
                 <div class="detail-title-card">
                     <h1 class="detail-title"><?php echo htmlspecialchars(cleanItemName($item['desc_en'])); ?></h1>
-                    <p class="detail-category"><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?> - <?php echo formatArmorGrade($item['itemGrade']); ?> Grade</p>
+                    <p class="detail-category"><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?> - <?php echo formatGrade($item['itemGrade']); ?> Grade</p>
                     <div class="detail-id">
                         <span>Item ID: <?php echo $item['item_id']; ?></span>
                     </div>
@@ -118,7 +118,7 @@ include '../../includes/hero.php';
                             
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Grade</span>
-                                <span class="detail-stat-value"><?php echo formatArmorGrade($item['itemGrade']); ?></span>
+                                <span class="detail-stat-value"><?php echo formatGrade($item['itemGrade']); ?></span>
                             </div>
                             
                             <?php if (isset($item['max_charge_count']) && $item['max_charge_count'] > 0): ?>
