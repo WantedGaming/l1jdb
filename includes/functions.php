@@ -1049,51 +1049,240 @@ function generateCacheKey($prefix, $params = []) {
     return $key;
 }
 
-/**
- * Format map type display
- * 
- * @param string $type Map type
- * @return string Formatted map type
- */
-function formatMapType(string $type): string
-{
-    $typeMap = [
-        'COMBAT' => 'Combat Zone',
-        'SAFETY' => 'Safety Zone',
-        'NORMAL' => 'Normal Zone'
-    ];
-    
-    return $typeMap[strtoupper($type)] ?? ucfirst(strtolower($type));
-}
+// ============================================================================
+// MAP-RELATED FUNCTIONS
+// ============================================================================
 
 /**
- * Get map icon URL
- * 
- * @param int $pngId PNG ID for the map icon
- * @return string URL to the map icon
+ * Format map type for display based on existing table fields
  */
-function getMapIconUrl(int $pngId): string
-{
-    if ($pngId > 0) {
-        $iconPath = "/assets/img/icons/{$pngId}.png";
-        $fullPath = $_SERVER['DOCUMENT_ROOT'] . $iconPath;
-        
-        if (file_exists($fullPath)) {
-            return $iconPath;
+function formatMapType($mapData) {
+    // If it's a string (already determined type), format it
+    if (is_string($mapData)) {
+        $types = [
+            'FIELD' => 'Field Map',
+            'DUNGEON' => 'Dungeon',
+            'UNDERWATER' => 'Underwater',
+            'SPECIAL' => 'Special Zone',
+            'COMBAT' => 'Combat Zone',
+            'SAFETY' => 'Safety Zone',
+            'NORMAL' => 'Normal Zone'
+        ];
+        return $types[strtoupper($mapData)] ?? ucfirst(strtolower($mapData));
+    }
+    
+    // If it's an array (map data), determine type
+    if (is_array($mapData)) {
+        if ($mapData['dungeon'] == 1) {
+            return 'Dungeon';
+        } elseif ($mapData['underwater'] == 1) {
+            return 'Underwater';
+        } elseif (isset($mapData['beginZone']) && ($mapData['beginZone'] || $mapData['redKnightZone'] || $mapData['ruunCastleZone'])) {
+            return 'Special Zone';
+        } else {
+            return 'Field Map';
         }
     }
     
-    // Default icon if not found
-    return "/assets/img/icons/default_map.png";
+    return 'Unknown';
 }
 
 /**
  * Format boolean attributes as Yes/No
- * 
- * @param int $value Boolean value (0 or 1)
- * @return string Formatted as Yes/No
  */
-function formatYesNo(int $value): string
-{
+function formatYesNo($value) {
     return $value == 1 ? 'Yes' : 'No';
 }
+
+/**
+ * Get map icon URL - Updated version that works with your setup
+ */
+function getMapIconUrl($pngId) {
+    // Default image path using your existing structure
+    $defaultIcon = '/l1jdb/assets/img/placeholders/0.png';
+    
+    if (empty($pngId) || $pngId == 0) {
+        return $defaultIcon;
+    }
+    
+    // Try different possible paths for map images based on your existing structure
+    $possiblePaths = [
+        "/l1jdb/assets/img/maps/{$pngId}.png",
+        "/l1jdb/assets/img/maps/{$pngId}.jpg",
+        "/l1jdb/assets/img/maps/map_{$pngId}.png",
+        "/l1jdb/assets/img/icons/{$pngId}.png", // Use your existing icons structure
+        "/l1jdb/public/img/maps/{$pngId}.png"
+    ];
+    
+    foreach ($possiblePaths as $path) {
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . $path)) {
+            return $path;
+        }
+    }
+    
+    // Return default placeholder if no image found
+    return $defaultIcon;
+}
+
+/**
+ * Get map coordinates display
+ */
+function formatMapCoordinates($startX, $endX, $startY, $endY) {
+    return "({$startX},{$startY}) to ({$endX},{$endY})";
+}
+
+/**
+ * Calculate map area
+ */
+function calculateMapArea($startX, $endX, $startY, $endY) {
+    $width = abs($endX - $startX);
+    $height = abs($endY - $startY);
+    return $width * $height;
+}
+
+/**
+ * Format map area for display
+ */
+function formatMapArea($startX, $endX, $startY, $endY) {
+    $area = calculateMapArea($startX, $endX, $startY, $endY);
+    return number_format($area) . ' sq units';
+}
+
+/**
+ * Get map difficulty based on properties
+ */
+function getMapDifficulty($map) {
+    $difficulty = 0;
+    
+    // Increase difficulty for dungeons
+    if ($map['dungeon']) {
+        $difficulty += 2;
+    }
+    
+    // Increase difficulty if underwater
+    if ($map['underwater']) {
+        $difficulty += 1;
+    }
+    
+    // Increase difficulty if penalties apply
+    if ($map['penalty']) {
+        $difficulty += 1;
+    }
+    
+    // Increase difficulty based on damage modifiers
+    if (isset($map['dmgModiNpc2Pc']) && $map['dmgModiNpc2Pc'] > 100) {
+        $difficulty += 1;
+    }
+    
+    // Decrease difficulty if resurrection is allowed
+    if ($map['resurrection']) {
+        $difficulty -= 1;
+    }
+    
+    $difficulty = max(0, min(5, $difficulty)); // Clamp between 0-5
+    
+    $levels = ['Very Easy', 'Easy', 'Normal', 'Hard', 'Very Hard', 'Extreme'];
+    return $levels[$difficulty];
+}
+
+/**
+ * Get map safety level
+ */
+function getMapSafety($map) {
+    $safety = 5; // Start with maximum safety
+    
+    // Reduce safety for dungeons
+    if ($map['dungeon']) {
+        $safety -= 2;
+    }
+    
+    // Reduce safety if penalties apply
+    if ($map['penalty']) {
+        $safety -= 1;
+    }
+    
+    // Reduce safety if resurrection is not allowed
+    if (!$map['resurrection']) {
+        $safety -= 1;
+    }
+    
+    // Reduce safety if escape is not allowed
+    if (!$map['escapable']) {
+        $safety -= 1;
+    }
+    
+    $safety = max(1, min(5, $safety)); // Clamp between 1-5
+    
+    $levels = ['', 'Very Dangerous', 'Dangerous', 'Moderate', 'Safe', 'Very Safe'];
+    return $levels[$safety];
+}
+
+/**
+ * Check if map is PvP enabled (based on penalties and other factors)
+ */
+function isPvPMap($map) {
+    // This is a basic heuristic - adjust based on your game's logic
+    return $map['penalty'] && !$map['beginZone'];
+}
+
+/**
+ * Get map features as array
+ */
+function getMapFeatures($map) {
+    $features = [];
+    
+    if ($map['underwater']) $features[] = 'Underwater';
+    if ($map['dungeon']) $features[] = 'Dungeon';
+    if ($map['markable']) $features[] = 'Bookmarkable';
+    if ($map['teleportable']) $features[] = 'Teleportable';
+    if ($map['escapable']) $features[] = 'Escapable';
+    if ($map['resurrection']) $features[] = 'Resurrection';
+    if ($map['take_pets']) $features[] = 'Pets Allowed';
+    if ($map['usable_item']) $features[] = 'Items Usable';
+    if ($map['usable_skill']) $features[] = 'Skills Usable';
+    if ($map['penalty']) $features[] = 'Death Penalty';
+    if ($map['beginZone']) $features[] = 'Beginner Zone';
+    if (isPvPMap($map)) $features[] = 'PvP Enabled';
+    
+    return $features;
+}
+
+/**
+ * Get map restrictions as array
+ */
+function getMapRestrictions($map) {
+    $restrictions = [];
+    
+    if (!$map['markable']) $restrictions[] = 'No Bookmarks';
+    if (!$map['teleportable']) $restrictions[] = 'No Teleport';
+    if (!$map['escapable']) $restrictions[] = 'No Escape';
+    if (!$map['resurrection']) $restrictions[] = 'No Resurrection';
+    if (!$map['take_pets']) $restrictions[] = 'No Pets';
+    if (!$map['recall_pets']) $restrictions[] = 'No Pet Recall';
+    if (!$map['usable_item']) $restrictions[] = 'No Items';
+    if (!$map['usable_skill']) $restrictions[] = 'No Skills';
+    
+    return $restrictions;
+}
+
+/**
+ * Generate breadcrumb trail for maps
+ */
+function getMapBreadcrumbs($map = null) {
+    $breadcrumbs = [
+        ['url' => '/l1jdb/public/', 'text' => 'Home', 'icon' => 'fa-home'],
+        ['url' => '/l1jdb/public/maps/', 'text' => 'Maps', 'icon' => 'fa-map']
+    ];
+    
+    if ($map) {
+        $breadcrumbs[] = [
+            'url' => null, 
+            'text' => $map['locationname'] ?? "Map #{$map['mapid']}", 
+            'icon' => 'fa-map-marker-alt'
+        ];
+    }
+    
+    return $breadcrumbs;
+}
+
+?>

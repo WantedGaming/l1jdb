@@ -1,376 +1,345 @@
 <?php
-declare(strict_types=1);
-
-require_once __DIR__ . '/../config/database.php';
-
-class Map
-{
+/**
+ * Map class for handling map-related database operations
+ */
+class Map {
     private $db;
-    private $perPage = 20;
-
-    public function __construct()
-    {
+    private $itemsPerPage = 24;
+    
+    public function __construct() {
         $this->db = Database::getInstance();
     }
-
+    
     /**
      * Get all maps with pagination
-     *
-     * @param int $page Current page number
-     * @return array Maps data with pagination info
      */
-    public function getAllMaps(int $page = 1): array
-    {
-        $offset = ($page - 1) * $this->perPage;
+    public function getAllMaps($page = 1) {
+        $offset = ($page - 1) * $this->itemsPerPage;
         
-        $query = "SELECT * FROM mapids ORDER BY mapid ASC LIMIT ?, ?";
-        $maps = $this->db->fetchAll($query, [$offset, $this->perPage]);
-        
-        // Get total count for pagination
+        // Get total count
         $countQuery = "SELECT COUNT(*) as total FROM mapids";
-        $result = $this->db->fetchAll($countQuery);
-        $totalRecords = $result[0]['total'] ?? 0;
+        $totalResult = $this->db->fetchAll($countQuery);
+        $totalRecords = $totalResult[0]['total'];
+        $totalPages = ceil($totalRecords / $this->itemsPerPage);
+        
+        // Get paginated results - include all fields that might be used in filtering
+        $query = "SELECT mapid, locationname, desc_kr, pngId, underwater, markable, 
+                         teleportable, dungeon, monster_amount, drop_rate, beginZone, 
+                         redKnightZone, ruunCastleZone
+                  FROM mapids 
+                  ORDER BY mapid ASC 
+                  LIMIT ? OFFSET ?";
+        
+        $maps = $this->db->fetchAll($query, [$this->itemsPerPage, $offset]);
         
         return [
             'data' => $maps,
             'total_records' => $totalRecords,
-            'total_pages' => ceil($totalRecords / $this->perPage),
-            'current_page' => $page
+            'total_pages' => $totalPages,
+            'current_page' => $page,
+            'items_per_page' => $this->itemsPerPage
         ];
     }
-
+    
     /**
-     * Get a single map by ID
-     *
-     * @param int $mapId Map ID
-     * @return array|null Map data or null if not found
+     * Search maps by name or location
      */
-    public function getMapById(int $mapId): ?array
-    {
-        $query = "SELECT * FROM mapids WHERE mapid = ?";
-        $result = $this->db->fetchOne($query, [$mapId]);
-        
-        return $result ?: null;
-    }
-
-    /**
-     * Search maps by name
-     *
-     * @param string $searchTerm Search term
-     * @param int $page Current page number
-     * @return array Maps data with pagination info
-     */
-    public function searchMaps(string $searchTerm, int $page = 1): array
-    {
-        $offset = ($page - 1) * $this->perPage;
+    public function searchMaps($searchTerm, $page = 1) {
+        $offset = ($page - 1) * $this->itemsPerPage;
         $searchPattern = "%{$searchTerm}%";
         
-        $query = "SELECT * FROM mapids WHERE 
-                 locationname LIKE ? OR 
-                 desc_kr LIKE ? 
-                 ORDER BY mapid ASC LIMIT ?, ?";
+        // Get total count
+        $countQuery = "SELECT COUNT(*) as total FROM mapids 
+                       WHERE locationname LIKE ? OR desc_kr LIKE ? OR mapid LIKE ?";
+        $totalResult = $this->db->fetchAll($countQuery, [$searchPattern, $searchPattern, $searchPattern]);
+        $totalRecords = $totalResult[0]['total'];
+        $totalPages = ceil($totalRecords / $this->itemsPerPage);
         
-        $maps = $this->db->fetchAll($query, [$searchPattern, $searchPattern, $offset, $this->perPage]);
+        // Get paginated results
+        $query = "SELECT mapid, locationname, desc_kr, pngId, underwater, markable, 
+                         teleportable, dungeon, monster_amount, drop_rate, beginZone, 
+                         redKnightZone, ruunCastleZone
+                  FROM mapids 
+                  WHERE locationname LIKE ? OR desc_kr LIKE ? OR mapid LIKE ?
+                  ORDER BY 
+                    CASE 
+                      WHEN locationname LIKE ? THEN 1
+                      WHEN desc_kr LIKE ? THEN 2
+                      ELSE 3
+                    END,
+                    mapid ASC
+                  LIMIT ? OFFSET ?";
         
-        // Get total count for pagination
-        $countQuery = "SELECT COUNT(*) as total FROM mapids WHERE 
-                     locationname LIKE ? OR 
-                     desc_kr LIKE ?";
-        
-        $result = $this->db->fetchAll($countQuery, [$searchPattern, $searchPattern]);
-        $totalRecords = $result[0]['total'] ?? 0;
+        $maps = $this->db->fetchAll($query, [
+            $searchPattern, $searchPattern, $searchPattern,
+            $searchPattern, $searchPattern,
+            $this->itemsPerPage, $offset
+        ]);
         
         return [
             'data' => $maps,
             'total_records' => $totalRecords,
-            'total_pages' => ceil($totalRecords / $this->perPage),
-            'current_page' => $page
+            'total_pages' => $totalPages,
+            'current_page' => $page,
+            'items_per_page' => $this->itemsPerPage
         ];
     }
-
+    
     /**
      * Filter maps based on criteria
-     *
-     * @param array $filters Filter criteria
-     * @param int $page Current page number
-     * @return array Maps data with pagination info
      */
-    public function filterMaps(array $filters, int $page = 1): array
-    {
-        $offset = ($page - 1) * $this->perPage;
+    public function filterMaps($filters, $page = 1) {
+        $offset = ($page - 1) * $this->itemsPerPage;
         $whereConditions = [];
         $params = [];
         
         // Build WHERE conditions based on filters
-        if (!empty($filters['underwater']) && $filters['underwater'] !== 'all') {
+        if (!empty($filters['underwater'])) {
             $whereConditions[] = "underwater = ?";
-            $params[] = $filters['underwater'] === 'yes' ? 1 : 0;
+            $params[] = ($filters['underwater'] === 'yes') ? 1 : 0;
         }
         
-        if (!empty($filters['markable']) && $filters['markable'] !== 'all') {
+        if (!empty($filters['markable'])) {
             $whereConditions[] = "markable = ?";
-            $params[] = $filters['markable'] === 'yes' ? 1 : 0;
+            $params[] = ($filters['markable'] === 'yes') ? 1 : 0;
         }
         
-        if (!empty($filters['teleportable']) && $filters['teleportable'] !== 'all') {
+        if (!empty($filters['teleportable'])) {
             $whereConditions[] = "teleportable = ?";
-            $params[] = $filters['teleportable'] === 'yes' ? 1 : 0;
+            $params[] = ($filters['teleportable'] === 'yes') ? 1 : 0;
         }
         
-        if (!empty($filters['dungeon']) && $filters['dungeon'] !== 'all') {
+        if (!empty($filters['dungeon'])) {
             $whereConditions[] = "dungeon = ?";
-            $params[] = $filters['dungeon'] === 'yes' ? 1 : 0;
+            $params[] = ($filters['dungeon'] === 'yes') ? 1 : 0;
         }
         
-        // Base query
-        $query = "SELECT * FROM mapids";
-        
-        // Add WHERE clause if we have conditions
-        if (!empty($whereConditions)) {
-            $query .= " WHERE " . implode(" AND ", $whereConditions);
+        if (!empty($filters['map_type'])) {
+            // Filter based on map characteristics instead of separate table
+            switch ($filters['map_type']) {
+                case 'DUNGEON':
+                    $whereConditions[] = "dungeon = 1";
+                    break;
+                case 'UNDERWATER':
+                    $whereConditions[] = "underwater = 1";
+                    break;
+                case 'SPECIAL':
+                    $whereConditions[] = "(beginZone = 1 OR redKnightZone = 1 OR ruunCastleZone = 1)";
+                    break;
+                case 'FIELD':
+                    $whereConditions[] = "dungeon = 0 AND underwater = 0 AND beginZone = 0 AND redKnightZone = 0 AND ruunCastleZone = 0";
+                    break;
+            }
         }
         
-        // Add ORDER BY and LIMIT
-        $query .= " ORDER BY mapid ASC LIMIT ?, ?";
+        $whereClause = !empty($whereConditions) ? "WHERE " . implode(" AND ", $whereConditions) : "";
         
-        // Add pagination params
+        // Get total count
+        $countQuery = "SELECT COUNT(*) as total FROM mapids {$whereClause}";
+        $totalResult = $this->db->fetchAll($countQuery, $params);
+        $totalRecords = $totalResult[0]['total'];
+        $totalPages = ceil($totalRecords / $this->itemsPerPage);
+        
+        // Get paginated results
+        $query = "SELECT mapid, locationname, desc_kr, pngId, underwater, markable, 
+                         teleportable, dungeon, monster_amount, drop_rate, beginZone, 
+                         redKnightZone, ruunCastleZone
+                  FROM mapids 
+                  {$whereClause}
+                  ORDER BY mapid ASC 
+                  LIMIT ? OFFSET ?";
+        
+        $params[] = $this->itemsPerPage;
         $params[] = $offset;
-        $params[] = $this->perPage;
         
         $maps = $this->db->fetchAll($query, $params);
-        
-        // Get total count for pagination
-        $countQuery = "SELECT COUNT(*) as total FROM mapids";
-        
-        if (!empty($whereConditions)) {
-            $countQuery .= " WHERE " . implode(" AND ", $whereConditions);
-        }
-        
-        $countParams = array_slice($params, 0, count($params) - 2); // Remove LIMIT params
-        $result = $this->db->fetchAll($countQuery, $countParams);
-        $totalRecords = $result[0]['total'] ?? 0;
         
         return [
             'data' => $maps,
             'total_records' => $totalRecords,
-            'total_pages' => ceil($totalRecords / $this->perPage),
-            'current_page' => $page
+            'total_pages' => $totalPages,
+            'current_page' => $page,
+            'items_per_page' => $this->itemsPerPage
         ];
     }
-
+    
     /**
-     * Create a new map
-     *
-     * @param array $mapData Map data
-     * @return int|false ID of the newly created map or false on failure
+     * Get a single map by ID
      */
-    public function createMap(array $mapData)
-    {
-        $query = "INSERT INTO mapids (
-            mapid, locationname, desc_kr, startX, endX, startY, endY, 
-            monster_amount, drop_rate, underwater, markable, teleportable, 
-            escapable, resurrection, painwand, penalty, take_pets, 
-            recall_pets, usable_item, usable_skill, dungeon, 
-            dmgModiPc2Npc, dmgModiNpc2Pc, decreaseHp, dominationTeleport, 
-            beginZone, redKnightZone, ruunCastleZone, interWarZone, 
-            geradBuffZone, growBuffZone, interKind, script, 
-            cloneStart, cloneEnd, pngId
-        ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-        )";
+    public function getMapById($mapId) {
+        $query = "SELECT * FROM mapids WHERE mapid = ?";
+        $result = $this->db->fetchAll($query, [$mapId]);
         
-        $params = [
-            $mapData['mapid'] ?? 0,
-            $mapData['locationname'] ?? null,
-            $mapData['desc_kr'] ?? '',
-            $mapData['startX'] ?? 0,
-            $mapData['endX'] ?? 0,
-            $mapData['startY'] ?? 0,
-            $mapData['endY'] ?? 0,
-            $mapData['monster_amount'] ?? 0,
-            $mapData['drop_rate'] ?? 0,
-            $mapData['underwater'] ?? 0,
-            $mapData['markable'] ?? 0,
-            $mapData['teleportable'] ?? 0,
-            $mapData['escapable'] ?? 0,
-            $mapData['resurrection'] ?? 0,
-            $mapData['painwand'] ?? 0,
-            $mapData['penalty'] ?? 0,
-            $mapData['take_pets'] ?? 0,
-            $mapData['recall_pets'] ?? 0,
-            $mapData['usable_item'] ?? 0,
-            $mapData['usable_skill'] ?? 0,
-            $mapData['dungeon'] ?? 0,
-            $mapData['dmgModiPc2Npc'] ?? 0,
-            $mapData['dmgModiNpc2Pc'] ?? 0,
-            $mapData['decreaseHp'] ?? 0,
-            $mapData['dominationTeleport'] ?? 0,
-            $mapData['beginZone'] ?? 0,
-            $mapData['redKnightZone'] ?? 0,
-            $mapData['ruunCastleZone'] ?? 0,
-            $mapData['interWarZone'] ?? 0,
-            $mapData['geradBuffZone'] ?? 0,
-            $mapData['growBuffZone'] ?? 0,
-            $mapData['interKind'] ?? 0,
-            $mapData['script'] ?? null,
-            $mapData['cloneStart'] ?? 0,
-            $mapData['cloneEnd'] ?? 0,
-            $mapData['pngId'] ?? 0
-        ];
-        
-        return $this->db->query($query, $params) ? $mapData['mapid'] : false;
+        return !empty($result) ? $result[0] : null;
     }
-
+    
     /**
-     * Update an existing map
-     *
-     * @param int $mapId Map ID
-     * @param array $mapData Map data
-     * @return bool Success status
+     * Get recent maps (for dashboard/homepage)
      */
-    public function updateMap(int $mapId, array $mapData): bool
-    {
-        $query = "UPDATE mapids SET
-            locationname = ?,
-            desc_kr = ?,
-            startX = ?,
-            endX = ?,
-            startY = ?,
-            endY = ?,
-            monster_amount = ?,
-            drop_rate = ?,
-            underwater = ?,
-            markable = ?,
-            teleportable = ?,
-            escapable = ?,
-            resurrection = ?,
-            painwand = ?,
-            penalty = ?,
-            take_pets = ?,
-            recall_pets = ?,
-            usable_item = ?,
-            usable_skill = ?,
-            dungeon = ?,
-            dmgModiPc2Npc = ?,
-            dmgModiNpc2Pc = ?,
-            decreaseHp = ?,
-            dominationTeleport = ?,
-            beginZone = ?,
-            redKnightZone = ?,
-            ruunCastleZone = ?,
-            interWarZone = ?,
-            geradBuffZone = ?,
-            growBuffZone = ?,
-            interKind = ?,
-            script = ?,
-            cloneStart = ?,
-            cloneEnd = ?,
-            pngId = ?
-        WHERE mapid = ?";
+    public function getRecentMaps($limit = 10) {
+        $query = "SELECT mapid, locationname, desc_kr, pngId, dungeon
+                  FROM mapids 
+                  ORDER BY mapid DESC 
+                  LIMIT ?";
         
-        $params = [
-            $mapData['locationname'] ?? null,
-            $mapData['desc_kr'] ?? '',
-            $mapData['startX'] ?? 0,
-            $mapData['endX'] ?? 0,
-            $mapData['startY'] ?? 0,
-            $mapData['endY'] ?? 0,
-            $mapData['monster_amount'] ?? 0,
-            $mapData['drop_rate'] ?? 0,
-            $mapData['underwater'] ?? 0,
-            $mapData['markable'] ?? 0,
-            $mapData['teleportable'] ?? 0,
-            $mapData['escapable'] ?? 0,
-            $mapData['resurrection'] ?? 0,
-            $mapData['painwand'] ?? 0,
-            $mapData['penalty'] ?? 0,
-            $mapData['take_pets'] ?? 0,
-            $mapData['recall_pets'] ?? 0,
-            $mapData['usable_item'] ?? 0,
-            $mapData['usable_skill'] ?? 0,
-            $mapData['dungeon'] ?? 0,
-            $mapData['dmgModiPc2Npc'] ?? 0,
-            $mapData['dmgModiNpc2Pc'] ?? 0,
-            $mapData['decreaseHp'] ?? 0,
-            $mapData['dominationTeleport'] ?? 0,
-            $mapData['beginZone'] ?? 0,
-            $mapData['redKnightZone'] ?? 0,
-            $mapData['ruunCastleZone'] ?? 0,
-            $mapData['interWarZone'] ?? 0,
-            $mapData['geradBuffZone'] ?? 0,
-            $mapData['growBuffZone'] ?? 0,
-            $mapData['interKind'] ?? 0,
-            $mapData['script'] ?? null,
-            $mapData['cloneStart'] ?? 0,
-            $mapData['cloneEnd'] ?? 0,
-            $mapData['pngId'] ?? 0,
-            $mapId
-        ];
-        
-        $stmt = $this->db->query($query, $params);
-        return $stmt ? $stmt->rowCount() > 0 : false;
-    }
-
-    /**
-     * Delete a map
-     *
-     * @param int $mapId Map ID
-     * @return bool Success status
-     */
-    public function deleteMap(int $mapId): bool
-    {
-        $query = "DELETE FROM mapids WHERE mapid = ?";
-        $stmt = $this->db->query($query, [$mapId]);
-        return $stmt ? $stmt->rowCount() > 0 : false;
-    }
-
-    /**
-     * Get map types for filtering
-     *
-     * @return array Map types
-     */
-    public function getMapTypes(): array
-    {
-        $query = "SELECT DISTINCT type FROM map_type ORDER BY type";
-        $results = $this->db->fetchAll($query);
-        
-        $types = [];
-        foreach ($results as $result) {
-            $types[] = $result['type'];
-        }
-        
-        return $types;
-    }
-
-    /**
-     * Get recent maps with limit
-     *
-     * @param int $limit Number of maps to retrieve
-     * @return array Recent maps data
-     */
-    public function getRecentMaps(int $limit = 4): array
-    {
-        $query = "SELECT * FROM mapids ORDER BY mapid DESC LIMIT ?";
         return $this->db->fetchAll($query, [$limit]);
     }
-
+    
     /**
-     * Get map image URL based on pngId
-     *
-     * @param int $pngId The PNG ID for the map
-     * @return string URL to the map image
+     * Get map statistics
      */
-    public function getMapImageUrl(int $pngId): string
-    {
-        $iconPath = "/assets/img/icons/{$pngId}.png";
-        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/l1jdb' . $iconPath;
+    public function getMapStats() {
+        $stats = [];
         
-        if ($pngId > 0 && file_exists($fullPath)) {
-            return $iconPath;
+        // Total maps
+        $totalQuery = "SELECT COUNT(*) as total FROM mapids";
+        $result = $this->db->fetchAll($totalQuery);
+        $stats['total_maps'] = $result[0]['total'];
+        
+        // Dungeons vs Fields
+        $dungeonQuery = "SELECT 
+                            SUM(CASE WHEN dungeon = 1 THEN 1 ELSE 0 END) as dungeons,
+                            SUM(CASE WHEN dungeon = 0 THEN 1 ELSE 0 END) as fields
+                         FROM mapids";
+        $result = $this->db->fetchAll($dungeonQuery);
+        $stats['dungeons'] = $result[0]['dungeons'];
+        $stats['fields'] = $result[0]['fields'];
+        
+        // Underwater maps
+        $underwaterQuery = "SELECT COUNT(*) as underwater FROM mapids WHERE underwater = 1";
+        $result = $this->db->fetchAll($underwaterQuery);
+        $stats['underwater'] = $result[0]['underwater'];
+        
+        // Teleportable maps
+        $teleportQuery = "SELECT COUNT(*) as teleportable FROM mapids WHERE teleportable = 1";
+        $result = $this->db->fetchAll($teleportQuery);
+        $stats['teleportable'] = $result[0]['teleportable'];
+        
+        return $stats;
+    }
+    
+    /**
+     * Get maps by type based on existing fields
+     */
+    public function getMapsByType($type, $page = 1) {
+        $offset = ($page - 1) * $this->itemsPerPage;
+        $whereCondition = "";
+        
+        switch ($type) {
+            case 'DUNGEON':
+                $whereCondition = "WHERE dungeon = 1";
+                break;
+            case 'UNDERWATER':
+                $whereCondition = "WHERE underwater = 1";
+                break;
+            case 'SPECIAL':
+                $whereCondition = "WHERE (beginZone = 1 OR redKnightZone = 1 OR ruunCastleZone = 1)";
+                break;
+            case 'FIELD':
+                $whereCondition = "WHERE dungeon = 0 AND underwater = 0 AND beginZone = 0 AND redKnightZone = 0 AND ruunCastleZone = 0";
+                break;
+            default:
+                $whereCondition = "";
         }
         
-        // Default icon if not found
-        return "/assets/img/placeholders/noimage.png";
+        // Get total count
+        $countQuery = "SELECT COUNT(*) as total FROM mapids {$whereCondition}";
+        $totalResult = $this->db->fetchAll($countQuery);
+        $totalRecords = $totalResult[0]['total'];
+        $totalPages = ceil($totalRecords / $this->itemsPerPage);
+        
+        // Get paginated results
+        $query = "SELECT mapid, locationname, desc_kr, pngId, underwater, markable, 
+                         teleportable, dungeon, monster_amount, drop_rate, beginZone, 
+                         redKnightZone, ruunCastleZone
+                  FROM mapids 
+                  {$whereCondition}
+                  ORDER BY mapid ASC 
+                  LIMIT ? OFFSET ?";
+        
+        $maps = $this->db->fetchAll($query, [$this->itemsPerPage, $offset]);
+        
+        return [
+            'data' => $maps,
+            'total_records' => $totalRecords,
+            'total_pages' => $totalPages,
+            'current_page' => $page,
+            'items_per_page' => $this->itemsPerPage
+        ];
+    }
+    
+    /**
+     * Get map image URL
+     */
+    public function getMapImageUrl($pngId) {
+        // Default image or placeholder
+        $defaultIcon = '/l1jdb/assets/img/placeholders/0.png';
+        
+        if (empty($pngId) || $pngId == 0) {
+            return $defaultIcon;
+        }
+        
+        // Try different possible paths for map images
+        $possiblePaths = [
+            "/l1jdb/assets/img/maps/{$pngId}.png",
+            "/l1jdb/assets/img/maps/{$pngId}.jpg",
+            "/l1jdb/assets/img/maps/map_{$pngId}.png",
+            "/l1jdb/assets/img/icons/{$pngId}.png"
+        ];
+        
+        foreach ($possiblePaths as $path) {
+            if (file_exists($_SERVER['DOCUMENT_ROOT'] . $path)) {
+                return $path;
+            }
+        }
+        
+        // Return placeholder if no image found
+        return $defaultIcon;
+    }
+    
+    /**
+     * Get random featured maps for homepage
+     */
+    public function getFeaturedMaps($limit = 6) {
+        $query = "SELECT mapid, locationname, desc_kr, pngId, dungeon, underwater
+                  FROM mapids 
+                  WHERE locationname IS NOT NULL AND locationname != ''
+                  ORDER BY RAND() 
+                  LIMIT ?";
+        
+        return $this->db->fetchAll($query, [$limit]);
+    }
+    
+    /**
+     * Get maps count by category
+     */
+    public function getMapCounts() {
+        $counts = [];
+        
+        // Total maps
+        $query = "SELECT COUNT(*) as total FROM mapids";
+        $result = $this->db->fetchAll($query);
+        $counts['total'] = $result[0]['total'];
+        
+        // Dungeons
+        $query = "SELECT COUNT(*) as count FROM mapids WHERE dungeon = 1";
+        $result = $this->db->fetchAll($query);
+        $counts['dungeons'] = $result[0]['count'];
+        
+        // Underwater
+        $query = "SELECT COUNT(*) as count FROM mapids WHERE underwater = 1";
+        $result = $this->db->fetchAll($query);
+        $counts['underwater'] = $result[0]['count'];
+        
+        // Special zones
+        $query = "SELECT COUNT(*) as count FROM mapids WHERE beginZone = 1 OR redKnightZone = 1 OR ruunCastleZone = 1";
+        $result = $this->db->fetchAll($query);
+        $counts['special'] = $result[0]['count'];
+        
+        // Fields (everything else)
+        $counts['fields'] = $counts['total'] - $counts['dungeons'] - $counts['underwater'] - $counts['special'];
+        
+        return $counts;
     }
 }
+?>

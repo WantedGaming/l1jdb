@@ -9,6 +9,7 @@ require_once __DIR__ . '/classes/Item.php';
 require_once __DIR__ . '/classes/Map.php';
 require_once __DIR__ . '/classes/Monster.php';
 require_once __DIR__ . '/classes/Doll.php';
+require_once __DIR__ . '/includes/functions.php';
 
 // Initialize session
 init_session();
@@ -37,6 +38,9 @@ $recentMonsters = $monster->getRecentMonsters(4);
 
 $dolls = new Doll();
 $recentDolls = $dolls->getRecentDolls(4);
+
+// Get map statistics for display
+$mapCounts = $maps->getMapCounts();
 
 // Create a combined array of all recent activities
 $recentActivities = [];
@@ -108,6 +112,28 @@ usort($recentActivities, function($a, $b) {
 // Limit to only 5 most recent activities
 $recentActivities = array_slice($recentActivities, 0, 5);
 
+// Helper function to show time ago format
+function timeAgo($timestamp) {
+    $time = strtotime($timestamp);
+    $now = time();
+    $diff = $now - $time;
+    
+    if ($diff < 60) {
+        return "Just now";
+    } elseif ($diff < 3600) {
+        $mins = round($diff / 60);
+        return $mins . " minute" . ($mins > 1 ? "s" : "") . " ago";
+    } elseif ($diff < 86400) {
+        $hours = round($diff / 3600);
+        return $hours . " hour" . ($hours > 1 ? "s" : "") . " ago";
+    } elseif ($diff < 604800) {
+        $days = round($diff / 86400);
+        return $days . " day" . ($days > 1 ? "s" : "") . " ago";
+    } else {
+        return date("M j, Y", $time);
+    }
+}
+
 // Include header
 include 'includes/header.php';
 
@@ -166,7 +192,7 @@ include 'includes/hero.php';
                     <a href="public/weapons/index.php" class="card-link-overlay"></a>
                     <div class="card-header">
                         <h3 class="card-header-title">Weapons</h3>
-                        <span class="card-badge"><?php echo count($weapons->getWeaponTypes()); ?> Types</span>
+                        <span class="card-badge"><?php echo count(getWeaponTypes()); ?> Types</span>
                     </div>
                     <div class="card-img-container">
                         <img src="assets/img/placeholders/weapons.png" alt="Weapons" class="card-img">
@@ -187,7 +213,7 @@ include 'includes/hero.php';
                     <a href="public/armor/index.php" class="card-link-overlay"></a>
                     <div class="card-header">
                         <h3 class="card-header-title">Armor</h3>
-                        <span class="card-badge"><?php echo count($armor->getArmorTypes()); ?> Types</span>
+                        <span class="card-badge"><?php echo count(getArmorTypes()); ?> Types</span>
                     </div>
                     <div class="card-img-container">
                         <img src="assets/img/placeholders/armor.png" alt="Armor" class="card-img">
@@ -208,7 +234,7 @@ include 'includes/hero.php';
                     <a href="public/items/index.php" class="card-link-overlay"></a>
                     <div class="card-header">
                         <h3 class="card-header-title">Items</h3>
-                        <span class="card-badge"><?php echo count($items->getItemTypes()); ?> Types</span>
+                        <span class="card-badge"><?php echo count(getEtcitemTypes()); ?> Types</span>
                     </div>
                     <div class="card-img-container">
                         <img src="assets/img/placeholders/items.png" alt="Items" class="card-img">
@@ -229,13 +255,31 @@ include 'includes/hero.php';
                     <a href="public/maps/index.php" class="card-link-overlay"></a>
                     <div class="card-header">
                         <h3 class="card-header-title">Maps</h3>
-                        <span class="card-badge"><?php echo count($maps->getMapTypes()); ?> Regions</span>
+                        <span class="card-badge"><?php echo number_format($mapCounts['total']); ?> Total</span>
                     </div>
                     <div class="card-img-container">
                         <img src="assets/img/placeholders/maps.png" alt="Maps" class="card-img">
                     </div>
                     <div class="card-content">
                         <p class="card-text">Explore the world's regions, dungeons, and special areas with detailed maps.</p>
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <span class="card-stat-label">Dungeons</span>
+                                <span class="card-stat-value"><?php echo number_format($mapCounts['dungeons']); ?></span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="card-stat-label">Fields</span>
+                                <span class="card-stat-value"><?php echo number_format($mapCounts['fields']); ?></span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="card-stat-label">Underwater</span>
+                                <span class="card-stat-value"><?php echo number_format($mapCounts['underwater']); ?></span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="card-stat-label">Special</span>
+                                <span class="card-stat-value"><?php echo number_format($mapCounts['special']); ?></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <span class="card-category">View Collection</span>
@@ -250,7 +294,7 @@ include 'includes/hero.php';
                     <a href="public/monsters/index.php" class="card-link-overlay"></a>
                     <div class="card-header">
                         <h3 class="card-header-title">Monsters</h3>
-                        <span class="card-badge"><?php echo count($monster->getMonsterTypes()); ?> Types</span>
+                        <span class="card-badge"><?php echo is_object($monster) && method_exists($monster, 'getMonsterTypes') ? count($monster->getMonsterTypes()) : 'Many'; ?> Types</span>
                     </div>
                     <div class="card-img-container">
                         <img src="assets/img/placeholders/monsters.png" alt="Monsters" class="card-img">
@@ -271,7 +315,7 @@ include 'includes/hero.php';
                     <a href="public/dolls/index.php" class="card-link-overlay"></a>
                     <div class="card-header">
                         <h3 class="card-header-title">Dolls</h3>
-                        <span class="card-badge"><?php echo count($dolls->getDollGrades()); ?> Grades</span>
+                        <span class="card-badge"><?php echo is_object($dolls) && method_exists($dolls, 'getDollGrades') ? count($dolls->getDollGrades()) : 'Many'; ?> Grades</span>
                     </div>
                     <div class="card-img-container">
                         <img src="assets/img/placeholders/dolls.png" alt="Dolls" class="card-img">
@@ -292,28 +336,6 @@ include 'includes/hero.php';
 </main>
 
 <?php
-// Helper function to show time ago format
-function timeAgo($timestamp) {
-    $time = strtotime($timestamp);
-    $now = time();
-    $diff = $now - $time;
-    
-    if ($diff < 60) {
-        return "Just now";
-    } elseif ($diff < 3600) {
-        $mins = round($diff / 60);
-        return $mins . " minute" . ($mins > 1 ? "s" : "") . " ago";
-    } elseif ($diff < 86400) {
-        $hours = round($diff / 3600);
-        return $hours . " hour" . ($hours > 1 ? "s" : "") . " ago";
-    } elseif ($diff < 604800) {
-        $days = round($diff / 86400);
-        return $days . " day" . ($days > 1 ? "s" : "") . " ago";
-    } else {
-        return date("M j, Y", $time);
-    }
-}
-
 // Include footer
 include 'includes/footer.php';
 ?>
