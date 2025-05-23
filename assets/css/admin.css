@@ -140,71 +140,21 @@ body.admin-body {
 }
 
 /* Dropdown styles */
-.dropdown {
-  position: relative;
-}
-
-.dropdown-toggle {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.dropdown-toggle::after {
-  content: '';
-  display: inline-block;
-  margin-left: 8px;
-  border-top: 5px solid var(--text);
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  transition: transform var(--transition-speed);
-}
-
-.dropdown:hover .dropdown-toggle::after,
-.dropdown.active .dropdown-toggle::after {
-  transform: rotate(180deg);
-  border-top-color: var(--admin-accent);
-}
-
+/* admin.css */
+/* Override dropdown border/background to use admin variables */
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
   background-color: var(--admin-secondary);
-  min-width: 200px;
-  border-radius: var(--border-radius);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  padding: var(--spacing-sm) 0;
-  z-index: 100;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: opacity var(--transition-speed), 
-              transform var(--transition-speed), 
-              visibility var(--transition-speed);
-  border: 1px solid var(--admin-border);
-}
-
-.dropdown:hover .dropdown-menu,
-.dropdown.active .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-item {
-  display: block;
-  padding: var(--spacing-sm) var(--spacing-md);
-  color: var(--text);
-  transition: all var(--transition-speed);
-  border-left: 2px solid transparent;
-  text-decoration: none;
+  border: 1px solid var(--admin-border); /* Admin-specific border */
 }
 
 .dropdown-item:hover {
-  background-color: var(--admin-hover-bg);
-  color: var(--admin-accent);
-  border-left-color: var(--admin-accent);
+  background-color: var(--admin-hover-bg); /* Admin-specific hover */
+  border-left-color: var(--admin-accent); /* Admin accent color */
+}
+
+/* Admin-specific dropdown toggle arrow color */
+.dropdown:hover .dropdown-toggle::after {
+  border-top-color: var(--admin-accent);
 }
 
 /* Dashboard Main Content */
@@ -1933,3 +1883,37 @@ body.admin-body {
   color: var(--admin-light);
   border: 1px solid var(--admin-border);
 }
+
+.admin-badge.admin-badge-only {
+    background-color: rgba(255, 215, 0, 0.2);
+    color: #ff8c00;
+}
+
+.admin-badge.admin-badge-myth {
+    background-color: rgba(138, 43, 226, 0.2);
+    color: #8a2be2;
+}
+
+.admin-badge.admin-badge-legend {
+    background-color: rgba(255, 140, 0, 0.2);
+    color: #ff8c00;
+}
+
+.admin-badge.admin-badge-hero {
+    background-color: rgba(255, 20, 147, 0.2);
+    color: #ff1493;
+}
+
+.admin-badge.admin-badge-rare {
+    background-color: rgba(30, 144, 255, 0.2);
+    color: #1e90ff;
+}
+
+.admin-badge.admin-badge-advanc {
+    background-color: rgba(50, 205, 50, 0.2);
+    color: #32cd32;
+}
+
+.admin-badge.admin-badge-normal {
+    background-color: rgba(128, 128, 128, 0.2);
+    color: #808080;

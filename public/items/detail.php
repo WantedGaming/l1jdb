@@ -108,7 +108,7 @@ include '../../includes/hero.php';
                             
                             <div class="detail-stat">
                                 <span class="detail-stat-label">Material</span>
-                                <span class="detail-stat-value"><?php echo formatMaterial($item['material']); ?></span>
+                                <span class="detail-stat-value"><?php echo formatEtcitemMaterial($item['material']); ?></span>
                             </div>
                             
                             <div class="detail-stat">

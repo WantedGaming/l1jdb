@@ -112,7 +112,7 @@ include '../../includes/hero.php';
                             <option value="">All Materials</option>
                             <?php foreach ($itemMaterials as $material): ?>
                             <option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
-                                <?php echo formatMaterial($material); ?>
+                                <?php echo formatEtcitemMaterial($material); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -171,7 +171,7 @@ include '../../includes/hero.php';
                                 </div>
                                 <div class="card-stat">
                                     <span class="card-stat-label">Material:</span>
-                                    <span class="card-stat-value"><?php echo formatMaterial($item['material']); ?></span>
+                                    <span class="card-stat-value"><?php echo formatEtcitemMaterial($item['material']); ?></span>
                                 </div>
                                 <?php if (isset($item['max_charge_count']) && $item['max_charge_count'] > 0): ?>
                                 <div class="card-stat">

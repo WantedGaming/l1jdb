@@ -158,9 +158,10 @@ include '../../includes/admin-header.php';
                     </div>
                     
                     <div class="admin-filter-group">
-                        <label for="item_type" class="admin-filter-label">Item Type</label>
-                        <select id="item_type" name="item_type" class="admin-filter-select">
-                            <option value="">All Types</option>
+					<label for="item_type" class="admin-filter-label">Item Type</label>
+					<div class="custom-select-wrapper">
+						<select id="item_type" name="item_type" class="admin-filter-select">
+							<option value="">All Types</option>
                             <?php foreach ($itemTypes as $type): ?>
                             <option value="<?php echo $type; ?>" <?php echo (isset($filters['item_type']) && $filters['item_type'] === $type) ? 'selected' : ''; ?>>
                                 <?php echo ucfirst(strtolower(str_replace('_', ' ', $type))); ?>
@@ -199,7 +200,7 @@ include '../../includes/admin-header.php';
                             <option value="">All Grades</option>
                             <?php foreach ($itemGrades as $grade): ?>
                             <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-                                <?php echo formatArmorGrade($grade); ?>
+                                <?php echo formatGrade($grade); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -243,8 +244,9 @@ include '../../includes/admin-header.php';
                             <th>Icon</th>
                             <th>Name (EN)</th>
                             <th>Name (KR)</th>
-                            <th>Type</th>
+                            <th>Item Type</th>
                             <th>Use Type</th>
+                            <th>Material</th>
                             <th>Grade</th>
                             <th>Bin</th>
                             <th>Actions</th>
@@ -253,7 +255,7 @@ include '../../includes/admin-header.php';
                     <tbody>
                         <?php if (empty($items['data'])): ?>
                         <tr>
-                            <td colspan="9" class="admin-table-empty">No items found. Please try a different search or filter.</td>
+                            <td colspan="10" class="admin-table-empty">No items found. Please try a different search or filter.</td>
                         </tr>
                         <?php else: ?>
                             <?php foreach ($items['data'] as $item): ?>
@@ -266,7 +268,12 @@ include '../../includes/admin-header.php';
                                 <td><?php echo htmlspecialchars(cleanItemName($item['desc_kr'])); ?></td>
                                 <td><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?></td>
                                 <td><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['use_type']))); ?></td>
-                                <td><?php echo formatArmorGrade($item['itemGrade']); ?></td>
+                                <td><?php echo formatMaterial($item['material']); ?></td>
+                                <td>
+                                    <span class="admin-badge admin-badge-<?php echo strtolower($item['itemGrade']); ?>">
+                                        <?php echo formatGrade($item['itemGrade']); ?>
+                                    </span>
+                                </td>
                                 <td>
                                     <?php if ($itemModel->hasBinData($item['item_name_id'])): ?>
                                     <span class="admin-badge admin-badge-success" title="Has bin data">✓</span>
@@ -339,30 +346,6 @@ include '../../includes/admin-header.php';
     </section>
 </main>
 
-<style>
-/* Admin badge styles */
-.admin-badge {
-    display: inline-block;
-    padding: 2px 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 10px;
-    text-align: center;
-    min-width: 20px;
-}
-
-.admin-badge-success {
-    background-color: rgba(40, 167, 69, 0.2);
-    color: #28a745;
-    border: 1px solid rgba(40, 167, 69, 0.3);
-}
-
-.admin-badge-secondary {
-    background-color: rgba(108, 117, 125, 0.2);
-    color: #6c757d;
-    border: 1px solid rgba(108, 117, 125, 0.3);
-}
-</style>
 
 <?php
 // Include admin footer

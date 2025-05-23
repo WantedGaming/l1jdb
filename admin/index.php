@@ -119,6 +119,22 @@ include '../includes/admin-header.php';
                 <div class="admin-stat-value"><?php echo number_format($totalDolls); ?></div>
                 <a href="dolls/index.php" class="admin-stat-link">Manage Dolls</a>
             </div>
+			
+			<div class="admin-stat-card">
+                <div class="admin-stat-header">
+                    <h3 class="admin-stat-title">DB Explore</h3>
+                    <i class="fas fa fa-database admin-stat-icon"></i>
+                </div>
+                <a href="tools/database-explorer.php" class="admin-stat-link">DB Stats</a>
+            </div>
+			
+			<div class="admin-stat-card">
+                <div class="admin-stat-header">
+                    <h3 class="admin-stat-title">Functions</h3>
+                    <i class="fas fa fa-cog admin-stat-icon"></i>
+                </div>
+                <a href="tools/functions.php" class="admin-stat-link">DB Stats</a>
+            </div>
         </div>
         
         <div class="admin-content-area">

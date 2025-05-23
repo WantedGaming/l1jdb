@@ -1,142 +1,467 @@
 <?php
 /**
  * Enhanced global helper functions for the L1J Database website
- * Consolidated common functionality from Weapon, Armor, and Item classes
+ * Complete formatting functions for Weapon, Armor, and Etcitem tables
  */
 
+// ============================================================================
+// WEAPON TABLE FORMATTING FUNCTIONS
+// ============================================================================
+
 /**
- * Format weapon type to make it more readable
+ * Format weapon item grade for display
+ * 
+ * @param string $grade The weapon itemGrade from database
+ * @return string Formatted weapon grade
+ */
+function formatWeaponGrade($grade) {
+    $gradeMap = [
+        'ONLY' => 'Unique',
+        'MYTH' => 'Mythical',
+        'LEGEND' => 'Legendary',
+        'HERO' => 'Heroic',
+        'RARE' => 'Rare',
+        'ADVANC' => 'Advanced',
+        'NORMAL' => 'Normal'
+    ];
+    
+    return isset($gradeMap[strtoupper($grade)]) ? $gradeMap[strtoupper($grade)] : ucfirst(strtolower($grade));
+}
+
+/**
+ * Format weapon type for display
  * 
  * @param string $type The weapon type from database
  * @return string Formatted weapon type
  */
 function formatWeaponType($type) {
-    // List of weapon types that need special formatting
-    $specialTypes = [
-        'BLUNT' => 'Blunt',
-        'BOW' => 'Bow',
-        'CHAINSWORD' => 'Chainsword',
-        'CLAW' => 'Claw',
-        'DAGGER' => 'Dagger',
-        'EDORYU' => 'Edoryu',
-        'GAUNTLET' => 'Gauntlet',
-        'KEYRINGK' => 'Keyringk',
-        'SINGLE_BOW' => 'Bow (1H)',
-        'SINGLE_SPEAR' => 'Spear (1H)',
-        'SPEAR' => 'Spear',
-        'STAFF' => 'Staff',
+    $typeMap = [
         'SWORD' => 'Sword',
-        'TOHAND_BLUNT' => 'Blunt (2H)',
-        'TOHAND_STAFF' => 'Staff (2H)',
-        'TOHAND_SWORD' => 'Sword (2H)',
+        'DAGGER' => 'Dagger',
+        'TOHAND_SWORD' => 'Two-Handed Sword',
+        'BOW' => 'Bow',
+        'SPEAR' => 'Spear',
+        'BLUNT' => 'Blunt Weapon',
+        'STAFF' => 'Staff',
+        'STING' => 'Sting',
+        'ARROW' => 'Arrow',
+        'GAUNTLET' => 'Gauntlet',
+        'CLAW' => 'Claw',
+        'EDORYU' => 'Edoryu',
+        'SINGLE_BOW' => 'Single Bow',
+        'SINGLE_SPEAR' => 'Single Spear',
+        'TOHAND_BLUNT' => 'Two-Handed Blunt',
+        'TOHAND_STAFF' => 'Two-Handed Staff',
+        'KEYRINGK' => 'Keyringk',
+        'CHAINSWORD' => 'Chainsword'
     ];
     
-    // Check if it's a special type
-    if (isset($specialTypes[strtoupper($type)])) {
-        return $specialTypes[strtoupper($type)];
-    }
-    
-    // For types not in the special list, just capitalize first letter of each word
-    return ucwords(strtolower(str_replace('_', ' ', $type)));
+    return isset($typeMap[strtoupper($type)]) ? $typeMap[strtoupper($type)] : ucwords(strtolower(str_replace('_', ' ', $type)));
 }
 
 /**
- * Format armor type to make it more readable
+ * Format weapon material for display
+ * 
+ * @param string $material The weapon material from database
+ * @return string Formatted weapon material
+ */
+function formatWeaponMaterial($material) {
+    // Remove Korean text in parentheses first
+    $cleanMaterial = preg_replace('/\([^)]*\)/', '', $material);
+    $cleanMaterial = trim($cleanMaterial);
+    
+    $materialMap = [
+        'NONE' => 'None',
+        'LIQUID' => 'Liquid',
+        'WAX' => 'Wax',
+        'VEGGY' => 'Vegetable',
+        'FLESH' => 'Flesh',
+        'PAPER' => 'Paper',
+        'CLOTH' => 'Cloth',
+        'LEATHER' => 'Leather',
+        'WOOD' => 'Wood',
+        'BONE' => 'Bone',
+        'DRAGON_HIDE' => 'Dragon Hide',
+        'IRON' => 'Iron',
+        'METAL' => 'Metal',
+        'COPPER' => 'Copper',
+        'SILVER' => 'Silver',
+        'GOLD' => 'Gold',
+        'PLATINUM' => 'Platinum',
+        'MITHRIL' => 'Mithril',
+        'PLASTIC' => 'Black Mithril',
+        'GLASS' => 'Glass',
+        'GEMSTONE' => 'Gemstone',
+        'MINERAL' => 'Mineral',
+        'ORIHARUKON' => 'Oriharukon',
+        'DRANIUM' => 'Dranium'
+    ];
+    
+    return isset($materialMap[strtoupper($cleanMaterial)]) ? $materialMap[strtoupper($cleanMaterial)] : ucwords(strtolower($cleanMaterial));
+}
+
+// ============================================================================
+// ARMOR TABLE FORMATTING FUNCTIONS
+// ============================================================================
+
+/**
+ * Format armor item grade for display
+ * 
+ * @param string $grade The armor itemGrade from database
+ * @return string Formatted armor grade
+ */
+function formatArmorGrade($grade) {
+    $gradeMap = [
+        'ONLY' => 'Unique',
+        'MYTH' => 'Mythical',
+        'LEGEND' => 'Legendary',
+        'HERO' => 'Heroic',
+        'RARE' => 'Rare',
+        'ADVANC' => 'Advanced',
+        'NORMAL' => 'Normal'
+    ];
+    
+    return isset($gradeMap[strtoupper($grade)]) ? $gradeMap[strtoupper($grade)] : ucfirst(strtolower($grade));
+}
+
+/**
+ * Format armor type for display
  * 
  * @param string $type The armor type from database
  * @return string Formatted armor type
  */
 function formatArmorType($type) {
-    // List of armor types that need special formatting
-    $specialTypes = [
-        'AMULET' => 'Amulet',
+    $typeMap = [
+        'NONE' => 'None',
+        'HELMET' => 'Helmet',
         'ARMOR' => 'Armor',
-        'BELT' => 'Belt',
+        'T_SHIRT' => 'T-Shirt',
+        'CLOAK' => 'Cloak',
+        'GLOVE' => 'Gloves',
         'BOOTS' => 'Boots',
-        'BOW' => 'Bow',
-        'BRACER' => 'Bracer',
+        'SHIELD' => 'Shield',
+        'AMULET' => 'Amulet',
+        'RING' => 'Ring',
+        'BELT' => 'Belt',
+        'RING_2' => 'Ring (2nd)',
+        'EARRING' => 'Earring',
+        'GARDER' => 'Garter',
+        'RON' => 'Ron',
+        'PAIR' => 'Pair',
+        'SENTENCE' => 'Sentence',
+        'SHOULDER' => 'Shoulder',
+        'BADGE' => 'Badge',
+        'PENDANT' => 'Pendant'
+    ];
+    
+    return isset($typeMap[strtoupper($type)]) ? $typeMap[strtoupper($type)] : ucwords(strtolower(str_replace('_', ' ', $type)));
+}
+
+/**
+ * Format armor material for display
+ * 
+ * @param string $material The armor material from database
+ * @return string Formatted armor material
+ */
+function formatArmorMaterial($material) {
+    // Remove Korean text in parentheses first
+    $cleanMaterial = preg_replace('/\([^)]*\)/', '', $material);
+    $cleanMaterial = trim($cleanMaterial);
+    
+    $materialMap = [
+        'NONE' => 'None',
+        'LIQUID' => 'Liquid',
+        'WAX' => 'Wax',
+        'VEGGY' => 'Vegetable',
+        'FLESH' => 'Flesh',
+        'PAPER' => 'Paper',
+        'CLOTH' => 'Cloth',
+        'LEATHER' => 'Leather',
+        'WOOD' => 'Wood',
+        'BONE' => 'Bone',
+        'DRAGON_HIDE' => 'Dragon Hide',
+        'IRON' => 'Iron',
+        'METAL' => 'Metal',
+        'COPPER' => 'Copper',
+        'SILVER' => 'Silver',
+        'GOLD' => 'Gold',
+        'PLATINUM' => 'Platinum',
+        'MITHRIL' => 'Mithril',
+        'PLASTIC' => 'Black Mithril',
+        'GLASS' => 'Glass',
+        'GEMSTONE' => 'Gemstone',
+        'MINERAL' => 'Mineral',
+        'ORIHARUKON' => 'Oriharukon',
+        'DRANIUM' => 'Dranium'
+    ];
+    
+    return isset($materialMap[strtoupper($cleanMaterial)]) ? $materialMap[strtoupper($cleanMaterial)] : ucwords(strtolower($cleanMaterial));
+}
+
+// ============================================================================
+// ETCITEM TABLE FORMATTING FUNCTIONS
+// ============================================================================
+
+/**
+ * Format etcitem item grade for display
+ * 
+ * @param string $grade The etcitem itemGrade from database
+ * @return string Formatted item grade
+ */
+function formatEtcitemGrade($grade) {
+    $gradeMap = [
+        'ONLY' => 'Unique',
+        'MYTH' => 'Mythical',
+        'LEGEND' => 'Legendary',
+        'HERO' => 'Heroic',
+        'RARE' => 'Rare',
+        'ADVANC' => 'Advanced',
+        'NORMAL' => 'Normal'
+    ];
+    
+    return isset($gradeMap[strtoupper($grade)]) ? $gradeMap[strtoupper($grade)] : ucfirst(strtolower($grade));
+}
+
+/**
+ * Format etcitem item type for display
+ * 
+ * @param string $type The etcitem item_type from database
+ * @return string Formatted item type
+ */
+function formatEtcitemType($type) {
+    $typeMap = [
+        'ARROW' => 'Arrow',
+        'WAND' => 'Wand',
+        'LIGHT' => 'Light',
+        'GEM' => 'Gem',
+        'TOTEM' => 'Totem',
+        'FIRE_CRACKER' => 'Firecracker',
+        'POTION' => 'Potion',
+        'FOOD' => 'Food',
+        'SCROLL' => 'Scroll',
+        'QUEST_ITEM' => 'Quest Item',
+        'SPELL_BOOK' => 'Spell Book',
+        'PET_ITEM' => 'Pet Item',
+        'OTHER' => 'Other',
+        'MATERIAL' => 'Material',
+        'EVENT' => 'Event Item',
+        'STING' => 'Sting',
+        'TREASURE_BOX' => 'Treasure Box'
+    ];
+    
+    return isset($typeMap[strtoupper($type)]) ? $typeMap[strtoupper($type)] : ucwords(strtolower(str_replace('_', ' ', $type)));
+}
+
+/**
+ * Format etcitem use type for display
+ * 
+ * @param string $useType The etcitem use_type from database
+ * @return string Formatted use type
+ */
+function formatEtcitemUseType($useType) {
+    $useTypeMap = [
+        'NONE' => 'None',
+        'NORMAL' => 'Normal',
+        'WAND1' => 'Wand (Type 1)',
+        'WAND' => 'Wand',
+        'SPELL_LONG' => 'Long Range Spell',
+        'NTELE' => 'N-Teleport',
+        'IDENTIFY' => 'Identify',
+        'RES' => 'Resurrection',
+        'TELEPORT' => 'Teleport',
+        'INVISABLE' => 'Invisibility',
+        'LETTER' => 'Letter',
+        'LETTER_W' => 'Letter (W)',
+        'CHOICE' => 'Choice',
+        'INSTRUMENT' => 'Instrument',
+        'SOSC' => 'SOSC',
+        'SPELL_SHORT' => 'Short Range Spell',
+        'T_SHIRT' => 'T-Shirt',
         'CLOAK' => 'Cloak',
         'GLOVE' => 'Glove',
-        'GUARDER' => 'Guarder',
-        'HELM' => 'Helm',
+        'BOOTS' => 'Boots',
+        'HELMET' => 'Helmet',
         'RING' => 'Ring',
+        'AMULET' => 'Amulet',
         'SHIELD' => 'Shield',
-        'T_SHIRT' => 'T-Shirt'
+        'GARDER' => 'Garter',
+        'DAI' => 'Dai',
+        'ZEL' => 'Zel',
+        'BLANK' => 'Blank',
+        'BTELE' => 'B-Teleport',
+        'SPELL_BUFF' => 'Buff Spell',
+        'CCARD' => 'C-Card',
+        'CCARD_W' => 'C-Card (W)',
+        'VCARD' => 'V-Card',
+        'VCARD_W' => 'V-Card (W)',
+        'WCARD' => 'W-Card',
+        'WCARD_W' => 'W-Card (W)',
+        'BELT' => 'Belt',
+        'SPELL_LONG2' => 'Long Range Spell (Type 2)',
+        'EARRING' => 'Earring',
+        'FISHING_ROD' => 'Fishing Rod',
+        'RON' => 'Ron',
+        'RON_2' => 'Ron (Type 2)',
+        'ACCZEL' => 'Acczel',
+        'PAIR' => 'Pair',
+        'HEALING' => 'Healing',
+        'SHOULDER' => 'Shoulder',
+        'BADGE' => 'Badge',
+        'POTENTIAL_SCROLL' => 'Potential Scroll',
+        'SPELLMELT' => 'Spell Melt',
+        'ELIXER_RON' => 'Elixir Ron',
+        'INVENTORY_BONUS' => 'Inventory Bonus',
+        'TAM_FRUIT' => 'Tam Fruit',
+        'RACE_TICKET' => 'Race Ticket',
+        'PAIR_2' => 'Pair (Type 2)',
+        'MAGICDOLL' => 'Magic Doll',
+        'SENTENCE' => 'Sentence',
+        'SHOULDER_2' => 'Shoulder (Type 2)',
+        'BADGE_2' => 'Badge (Type 2)',
+        'PET_POTION' => 'Pet Potion',
+        'GARDER_2' => 'Garter (Type 2)',
+        'DOMINATION_POLY' => 'Domination Poly',
+        'PENDANT' => 'Pendant',
+        'SHOVEL' => 'Shovel',
+        'LEV_100_POLY' => 'Level 100 Poly',
+        'SMELTING' => 'Smelting',
+        'PURIFY' => 'Purify',
+        'CHARGED_MAP_TIME' => 'Charged Map Time'
     ];
     
-    // Check if it's a special type
-    if (isset($specialTypes[strtoupper($type)])) {
-        return $specialTypes[strtoupper($type)];
-    }
-    
-    // For types not in the special list, just capitalize first letter of each word
-    return ucwords(strtolower(str_replace('_', ' ', $type)));
+    return isset($useTypeMap[strtoupper($useType)]) ? $useTypeMap[strtoupper($useType)] : ucwords(strtolower(str_replace('_', ' ', $useType)));
 }
 
 /**
- * Format material to remove Korean text in parentheses and normalize
+ * Format etcitem material for display
  * 
- * @param string $material The material from database
+ * @param string $material The etcitem material from database
  * @return string Formatted material
  */
-function formatMaterial($material) {
-    // Remove Korean text in parentheses
-    $material = preg_replace('/\([^)]*\)/', '', $material);
+function formatEtcitemMaterial($material) {
+    // Remove Korean text in parentheses first
+    $cleanMaterial = preg_replace('/\([^)]*\)/', '', $material);
+    $cleanMaterial = trim($cleanMaterial);
     
-    // Remove any trailing hyphens and extra whitespace
-    $material = trim(str_replace('-', '', $material));
-    
-    // List of materials that need special formatting
-    $specialMaterials = [
-        'IRON(철)' => 'Iron',
-        'MITHRIL(미스릴)' => 'Mithril',
-        'BONE(뼈)' => 'Bone',
-        'ORIHARUKON(오리하루콘)' => 'Oriharukon',
-        'SILVER(은)' => 'Silver',
-        'PLASTIC(블랙미스릴)' => 'Plastic',
-        'GOLD(금)' => 'Gold', 
-        'METAL(금속)' => 'Metal',
-        'PLATINUM(백금)' => 'Platinum',
-        'DRAGON_HIDE(용비늘)' => 'Dragon Hide',
-        'WOOD(나무)' => 'Wood',
-        'LEATHER(가죽)' => 'Leather',
-        'GEMSTONE(보석)' => 'Gemstone',
+    $materialMap = [
+        'NONE' => 'None',
+        'LIQUID' => 'Liquid',
+        'WAX' => 'Wax',
+        'VEGGY' => 'Vegetable',
+        'FLESH' => 'Flesh',
+        'PAPER' => 'Paper',
+        'CLOTH' => 'Cloth',
+        'LEATHER' => 'Leather',
+        'WOOD' => 'Wood',
+        'BONE' => 'Bone',
+        'DRAGON_HIDE' => 'Dragon Hide',
+        'IRON' => 'Iron',
+        'METAL' => 'Metal',
+        'COPPER' => 'Copper',
+        'SILVER' => 'Silver',
+        'GOLD' => 'Gold',
+        'PLATINUM' => 'Platinum',
+        'MITHRIL' => 'Mithril',
+        'PLASTIC' => 'Black Mithril',
+        'GLASS' => 'Glass',
+        'GEMSTONE' => 'Gemstone',
+        'MINERAL' => 'Mineral',
+        'ORIHARUKON' => 'Oriharukon',
+        'DRANIUM' => 'Dranium'
     ];
     
-    // Check if it's a special material
-    if (isset($specialMaterials[strtoupper($material)])) {
-        return $specialMaterials[strtoupper($material)];
-    }
-    
-    // For materials not in the special list, just capitalize first letter of each word
-    return ucwords(strtolower($material));
+    return isset($materialMap[strtoupper($cleanMaterial)]) ? $materialMap[strtoupper($cleanMaterial)] : ucwords(strtolower($cleanMaterial));
 }
 
 /**
- * Format armor grade to make it more readable
+ * Format etcitem attribute for display
  * 
- * @param string $grade The armor grade from database
- * @return string Formatted armor grade
+ * @param string $attr The etcitem attr from database
+ * @return string Formatted attribute
  */
-function formatGrade($grade) {
-    // List of armor grades that need special formatting
-    $gradeMap = [
-        'NORMAL' => 'Normal',
-        'ADVANC' => 'Advanced',
-        'RARE' => 'Rare',
-        'HERO' => 'Hero',
-        'LEGEND' => 'Legend',
-        'MYTH' => 'Myth',
-        'ONLY' => 'Unique'
+function formatEtcitemAttribute($attr) {
+    $attrMap = [
+        'EARTH' => 'Earth',
+        'AIR' => 'Air',
+        'WATER' => 'Water',
+        'FIRE' => 'Fire',
+        'NONE' => 'None'
     ];
     
-    // Check if it's a known grade
-    if (isset($gradeMap[$grade])) {
-        return $gradeMap[$grade];
-    }
+    return isset($attrMap[strtoupper($attr)]) ? $attrMap[strtoupper($attr)] : ucfirst(strtolower($attr));
+}
+
+/**
+ * Format etcitem alignment for display
+ * 
+ * @param string $alignment The etcitem alignment from database
+ * @return string Formatted alignment
+ */
+function formatEtcitemAlignment($alignment) {
+    $alignmentMap = [
+        'CAOTIC' => 'Chaotic',
+        'NEUTRAL' => 'Neutral',
+        'LAWFUL' => 'Lawful',
+        'NONE' => 'None'
+    ];
     
-    // For grades not in the map, just capitalize first letter
-    return ucfirst(strtolower($grade));
+    return isset($alignmentMap[strtoupper($alignment)]) ? $alignmentMap[strtoupper($alignment)] : ucfirst(strtolower($alignment));
+}
+
+/**
+ * Format etcitem skill type for display
+ * 
+ * @param string $skillType The etcitem skill_type from database
+ * @return string Formatted skill type
+ */
+function formatEtcitemSkillType($skillType) {
+    $skillTypeMap = [
+        'passive' => 'Passive',
+        'active' => 'Active',
+        'none' => 'None'
+    ];
+    
+    return isset($skillTypeMap[strtolower($skillType)]) ? $skillTypeMap[strtolower($skillType)] : ucfirst(strtolower($skillType));
+}
+
+/**
+ * Format etcitem limit type for display
+ * 
+ * @param string $limitType The etcitem limit_type from database
+ * @return string Formatted limit type
+ */
+function formatEtcitemLimitType($limitType) {
+    $limitTypeMap = [
+        'WORLD_WAR' => 'World War',
+        'BEGIN_ZONE' => 'Begin Zone',
+        'NONE' => 'None'
+    ];
+    
+    return isset($limitTypeMap[strtoupper($limitType)]) ? $limitTypeMap[strtoupper($limitType)] : ucwords(strtolower(str_replace('_', ' ', $limitType)));
+}
+
+// ============================================================================
+// UNIVERSAL FORMATTING FUNCTIONS
+// ============================================================================
+
+/**
+ * Format any item grade (works for all tables)
+ * 
+ * @param string $grade The itemGrade from database
+ * @return string Formatted grade
+ */
+function formatGrade($grade) {
+    $gradeMap = [
+        'ONLY' => 'Unique',
+        'MYTH' => 'Mythical',
+        'LEGEND' => 'Legendary',
+        'HERO' => 'Heroic',
+        'RARE' => 'Rare',
+        'ADVANC' => 'Advanced',
+        'NORMAL' => 'Normal'
+    ];
+    
+    return isset($gradeMap[strtoupper($grade)]) ? $gradeMap[strtoupper($grade)] : ucfirst(strtolower($grade));
 }
 
 /**
@@ -163,6 +488,29 @@ function cleanItemName($name) {
     $name = trim($name);
     
     return $name;
+}
+
+/**
+ * Format boolean values for display
+ * 
+ * @param string|int $value The boolean value from database
+ * @return string Formatted boolean
+ */
+function formatBoolean($value) {
+    if (is_string($value)) {
+        return (strtolower($value) === 'true') ? 'Yes' : 'No';
+    }
+    return $value ? 'Yes' : 'No';
+}
+
+/**
+ * Format merge status for display
+ * 
+ * @param string $merge The merge status from database
+ * @return string Formatted merge status
+ */
+function formatMergeStatus($merge) {
+    return (strtolower($merge) === 'true') ? 'Stackable' : 'Non-stackable';
 }
 
 // ============================================================================
@@ -528,6 +876,144 @@ function getPaginationInfo($currentPage, $perPage, $totalItems) {
 }
 
 // ============================================================================
+// HELPER FUNCTIONS FOR FILTERING AND SORTING
+// ============================================================================
+
+/**
+ * Get all possible weapon types for filtering
+ * 
+ * @return array Array of weapon types
+ */
+function getWeaponTypes() {
+    return [
+        'SWORD' => 'Sword',
+        'DAGGER' => 'Dagger',
+        'TOHAND_SWORD' => 'Two-Handed Sword',
+        'BOW' => 'Bow',
+        'SPEAR' => 'Spear',
+        'BLUNT' => 'Blunt Weapon',
+        'STAFF' => 'Staff',
+        'STING' => 'Sting',
+        'ARROW' => 'Arrow',
+        'GAUNTLET' => 'Gauntlet',
+        'CLAW' => 'Claw',
+        'EDORYU' => 'Edoryu',
+        'SINGLE_BOW' => 'Single Bow',
+        'SINGLE_SPEAR' => 'Single Spear',
+        'TOHAND_BLUNT' => 'Two-Handed Blunt',
+        'TOHAND_STAFF' => 'Two-Handed Staff',
+        'KEYRINGK' => 'Keyringk',
+        'CHAINSWORD' => 'Chainsword'
+    ];
+}
+
+/**
+ * Get all possible armor types for filtering
+ * 
+ * @return array Array of armor types
+ */
+function getArmorTypes() {
+    return [
+        'HELMET' => 'Helmet',
+        'ARMOR' => 'Armor',
+        'T_SHIRT' => 'T-Shirt',
+        'CLOAK' => 'Cloak',
+        'GLOVE' => 'Gloves',
+        'BOOTS' => 'Boots',
+        'SHIELD' => 'Shield',
+        'AMULET' => 'Amulet',
+        'RING' => 'Ring',
+        'BELT' => 'Belt',
+        'RING_2' => 'Ring (2nd)',
+        'EARRING' => 'Earring',
+        'GARDER' => 'Garter',
+        'RON' => 'Ron',
+        'PAIR' => 'Pair',
+        'SENTENCE' => 'Sentence',
+        'SHOULDER' => 'Shoulder',
+        'BADGE' => 'Badge',
+        'PENDANT' => 'Pendant'
+    ];
+}
+
+/**
+ * Get all possible etcitem types for filtering
+ * 
+ * @return array Array of etcitem types
+ */
+function getEtcitemTypes() {
+    return [
+        'ARROW' => 'Arrow',
+        'WAND' => 'Wand',
+        'LIGHT' => 'Light',
+        'GEM' => 'Gem',
+        'TOTEM' => 'Totem',
+        'FIRE_CRACKER' => 'Firecracker',
+        'POTION' => 'Potion',
+        'FOOD' => 'Food',
+        'SCROLL' => 'Scroll',
+        'QUEST_ITEM' => 'Quest Item',
+        'SPELL_BOOK' => 'Spell Book',
+        'PET_ITEM' => 'Pet Item',
+        'OTHER' => 'Other',
+        'MATERIAL' => 'Material',
+        'EVENT' => 'Event Item',
+        'STING' => 'Sting',
+        'TREASURE_BOX' => 'Treasure Box'
+    ];
+}
+
+/**
+ * Get all available grades for filtering
+ * 
+ * @return array Array of grades
+ */
+function getAllGrades() {
+    return [
+        'ONLY' => 'Unique',
+        'MYTH' => 'Mythical',
+        'LEGEND' => 'Legendary',
+        'HERO' => 'Heroic',
+        'RARE' => 'Rare',
+        'ADVANC' => 'Advanced',
+        'NORMAL' => 'Normal'
+    ];
+}
+
+/**
+ * Get all available materials for filtering
+ * 
+ * @return array Array of materials
+ */
+function getAllMaterials() {
+    return [
+        'LIQUID' => 'Liquid',
+        'WAX' => 'Wax',
+        'VEGGY' => 'Vegetable',
+        'FLESH' => 'Flesh',
+        'PAPER' => 'Paper',
+        'CLOTH' => 'Cloth',
+        'LEATHER' => 'Leather',
+        'WOOD' => 'Wood',
+        'BONE' => 'Bone',
+        'DRAGON_HIDE' => 'Dragon Hide',
+        'IRON' => 'Iron',
+        'METAL' => 'Metal',
+        'COPPER' => 'Copper',
+        'SILVER' => 'Silver',
+        'GOLD' => 'Gold',
+        'PLATINUM' => 'Platinum',
+        'MITHRIL' => 'Mithril',
+        'PLASTIC' => 'Black Mithril',
+        'GLASS' => 'Glass',
+        'GEMSTONE' => 'Gemstone',
+        'MINERAL' => 'Mineral',
+        'ORIHARUKON' => 'Oriharukon',
+        'DRANIUM' => 'Dranium'
+    ];
+}
+
+// ============================================================================
 // DEBUGGING AND LOGGING FUNCTIONS
 // ============================================================================
 
@@ -561,4 +1047,53 @@ function logQuery($query, $params = [], $executionTime = 0) {
 function generateCacheKey($prefix, $params = []) {
     $key = $prefix . '_' . md5(serialize($params));
     return $key;
+}
+
+/**
+ * Format map type display
+ * 
+ * @param string $type Map type
+ * @return string Formatted map type
+ */
+function formatMapType(string $type): string
+{
+    $typeMap = [
+        'COMBAT' => 'Combat Zone',
+        'SAFETY' => 'Safety Zone',
+        'NORMAL' => 'Normal Zone'
+    ];
+    
+    return $typeMap[strtoupper($type)] ?? ucfirst(strtolower($type));
+}
+
+/**
+ * Get map icon URL
+ * 
+ * @param int $pngId PNG ID for the map icon
+ * @return string URL to the map icon
+ */
+function getMapIconUrl(int $pngId): string
+{
+    if ($pngId > 0) {
+        $iconPath = "/assets/img/icons/{$pngId}.png";
+        $fullPath = $_SERVER['DOCUMENT_ROOT'] . $iconPath;
+        
+        if (file_exists($fullPath)) {
+            return $iconPath;
+        }
+    }
+    
+    // Default icon if not found
+    return "/assets/img/icons/default_map.png";
+}
+
+/**
+ * Format boolean attributes as Yes/No
+ * 
+ * @param int $value Boolean value (0 or 1)
+ * @return string Formatted as Yes/No
+ */
+function formatYesNo(int $value): string
+{
+    return $value == 1 ? 'Yes' : 'No';
 }

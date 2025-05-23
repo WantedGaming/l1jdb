@@ -91,7 +91,7 @@ include '../../includes/hero.php';
                             <option value="">All Materials</option>
                             <?php foreach ($weaponMaterials as $material): ?>
                             <option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
-                                <?php echo formatMaterial($material); ?>
+                                <?php echo formatWeaponMaterial($material); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -148,7 +148,7 @@ include '../../includes/hero.php';
                                 </div>
                                 <div class="card-stat">
                                     <span class="card-stat-label">Material:</span>
-                                    <span class="card-stat-value"><?php echo formatMaterial($weapon['material']); ?></span>
+                                    <span class="card-stat-value"><?php echo formatWeaponMaterial($weapon['material']); ?></span>
                                 </div>
                             </div>
                         </div>

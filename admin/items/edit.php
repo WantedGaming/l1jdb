@@ -243,7 +243,7 @@ include '../../includes/admin-header.php';
                                         <select id="itemGrade" name="itemGrade" class="admin-form-select" required>
                                             <?php foreach ($itemGrades as $grade): ?>
                                             <option value="<?php echo $grade; ?>" <?php echo ($item['itemGrade'] === $grade) ? 'selected' : ''; ?>>
-                                                <?php echo formatArmorGrade($grade); ?>
+                                                <?php echo formatGrade($grade); ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>

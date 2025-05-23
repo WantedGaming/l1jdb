@@ -88,12 +88,12 @@ include '../../includes/admin-header.php';
                     
                     <div class="admin-detail-row">
                         <div class="admin-detail-label">Real Description</div>
-                        <div class="admin-detail-value"><?php echo htmlspecialchars($binData['real_desc'] ?? 'None'); ?></div>
+                        <div class="admin-detail-value"><?php echo htmlspecialchars(cleanItemName($binData['real_desc'] ?? 'None')); ?></div>
                     </div>
                     
                     <div class="admin-detail-row">
                         <div class="admin-detail-label">Korean Description</div>
-                        <div class="admin-detail-value"><?php echo htmlspecialchars($binData['desc_kr'] ?? 'None'); ?></div>
+                        <div class="admin-detail-value"><?php echo htmlspecialchars(cleanItemName($binData['desc_kr'] ?? 'None')); ?></div>
                     </div>
                     
                     <div class="admin-detail-row">
@@ -234,7 +234,7 @@ include '../../includes/admin-header.php';
                                 <th>Icon</th>
                                 <th>Name (EN)</th>
                                 <th>Name (KR)</th>
-                                <th>Type</th>
+                                <th>Item Type</th>
                                 <th>Use Type</th>
                                 <th>Grade</th>
                                 <th>Actions</th>
@@ -251,7 +251,7 @@ include '../../includes/admin-header.php';
                                 <td><?php echo htmlspecialchars(cleanItemName($item['desc_kr'] ?? 'N/A')); ?></td>
                                 <td><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['item_type']))); ?></td>
                                 <td><?php echo ucfirst(strtolower(str_replace('_', ' ', $item['use_type']))); ?></td>
-                                <td><?php echo formatArmorGrade($item['itemGrade']); ?></td>
+                                <td><?php echo formatGrade($item['itemGrade']); ?></td>
                                 <td class="admin-actions">
                                     <a href="../../public/items/detail.php?id=<?php echo $item['item_id']; ?>" class="admin-button admin-button-info" title="View">
                                         <i class="fas fa-eye"></i>

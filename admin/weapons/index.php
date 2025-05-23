@@ -4,7 +4,7 @@ require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../classes/User.php';
 require_once '../../classes/Weapon.php';
-require_once '../../classes/functions.php';
+require_once '../../includes/functions.php';
 
 // Initialize session
 init_session();
@@ -192,6 +192,7 @@ include '../../includes/admin-header.php';
             <?php endif; ?>
             
             <!-- Filters -->
+			<!-- Filters -->
 			<div class="admin-filters">
 				<form action="index.php" method="get" class="admin-filter-form">
 					<div class="admin-filter-group">
@@ -205,7 +206,7 @@ include '../../includes/admin-header.php';
 							<option value="">All Types</option>
 							<?php foreach ($weaponTypes as $type): ?>
 							<option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
-								<?php echo $type; ?>
+								<?php echo formatWeaponType($type); ?>
 							</option>
 							<?php endforeach; ?>
 						</select>
@@ -217,7 +218,7 @@ include '../../includes/admin-header.php';
 							<option value="">All Materials</option>
 							<?php foreach ($weaponMaterials as $material): ?>
 							<option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
-								<?php echo $material; ?>
+								<?php echo formatWeaponMaterial($material); ?>
 							</option>
 							<?php endforeach; ?>
 						</select>
@@ -229,7 +230,7 @@ include '../../includes/admin-header.php';
 							<option value="">All Grades</option>
 							<?php foreach ($weaponGrades as $grade): ?>
 							<option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-								<?php echo $grade; ?>
+								<?php echo formatGrade($grade); ?>
 							</option>
 							<?php endforeach; ?>
 						</select>

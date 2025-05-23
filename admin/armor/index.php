@@ -4,6 +4,7 @@ require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../classes/User.php';
 require_once '../../classes/Armor.php';
+require_once '../../includes/functions.php';
 
 // Initialize session
 init_session();
@@ -126,6 +127,9 @@ include '../../includes/admin-header.php';
             <?php if (isset($_GET['deleted']) && $_GET['deleted'] == 1): ?>
             <div class="admin-alert admin-alert-success">
                 Armor has been deleted successfully.
+                <?php if (isset($_GET['armor_name'])): ?>
+                <br>Deleted: <strong><?php echo htmlspecialchars(cleanItemName($_GET['armor_name'])); ?></strong>
+                <?php endif; ?>
             </div>
             <?php endif; ?>
             
@@ -155,7 +159,7 @@ include '../../includes/admin-header.php';
                             <option value="">All Types</option>
                             <?php foreach ($armorTypes as $type): ?>
                             <option value="<?php echo $type; ?>" <?php echo (isset($filters['type']) && $filters['type'] === $type) ? 'selected' : ''; ?>>
-                                <?php echo $type; ?>
+                                <?php echo formatArmorType($type); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -167,7 +171,7 @@ include '../../includes/admin-header.php';
                             <option value="">All Materials</option>
                             <?php foreach ($armorMaterials as $material): ?>
                             <option value="<?php echo $material; ?>" <?php echo (isset($filters['material']) && $filters['material'] === $material) ? 'selected' : ''; ?>>
-                                <?php echo $material; ?>
+                                <?php echo formatMaterial($material); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -179,7 +183,7 @@ include '../../includes/admin-header.php';
                             <option value="">All Grades</option>
                             <?php foreach ($armorGrades as $grade): ?>
                             <option value="<?php echo $grade; ?>" <?php echo (isset($filters['grade']) && $filters['grade'] === $grade) ? 'selected' : ''; ?>>
-                                <?php echo $grade; ?>
+                                <?php echo formatGrade($grade); ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -224,6 +228,7 @@ include '../../includes/admin-header.php';
                             <th>Name (EN)</th>
                             <th>Name (KR)</th>
                             <th>Type</th>
+                            <th>Material</th>
                             <th>AC</th>
                             <th>Grade</th>
                             <th>Bin</th>
@@ -233,20 +238,25 @@ include '../../includes/admin-header.php';
                     <tbody>
                         <?php if (empty($armors['data'])): ?>
                         <tr>
-                            <td colspan="9" class="admin-table-empty">No armor found. Please try a different search or filter.</td>
+                            <td colspan="10" class="admin-table-empty">No armor found. Please try a different search or filter.</td>
                         </tr>
                         <?php else: ?>
                             <?php foreach ($armors['data'] as $armor): ?>
                             <tr>
                                 <td><?php echo $armor['item_id']; ?></td>
                                 <td>
-                                    <img src="<?php echo $armorModel->getArmorIconUrl($armor['iconId']); ?>" alt="<?php echo htmlspecialchars($armor['desc_en']); ?>" class="admin-table-icon">
+                                    <img src="<?php echo $armorModel->getArmorIconUrl($armor['iconId']); ?>" alt="<?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?>" class="admin-table-icon">
                                 </td>
-                                <td><?php echo htmlspecialchars($armor['desc_en']); ?></td>
-                                <td><?php echo htmlspecialchars($armor['desc_kr']); ?></td>
-                                <td><?php echo $armor['type']; ?></td>
+                                <td><?php echo htmlspecialchars(cleanItemName($armor['desc_en'])); ?></td>
+                                <td><?php echo htmlspecialchars(cleanItemName($armor['desc_kr'])); ?></td>
+                                <td><?php echo formatArmorType($armor['type']); ?></td>
+                                <td><?php echo formatMaterial($armor['material']); ?></td>
                                 <td><?php echo $armor['ac']; ?></td>
-                                <td><?php echo $armor['itemGrade']; ?></td>
+                                <td>
+                                    <span class="admin-badge admin-badge-<?php echo strtolower($armor['itemGrade']); ?>">
+                                        <?php echo formatGrade($armor['itemGrade']); ?>
+                                    </span>
+                                </td>
                                 <td>
                                     <?php if ($armorModel->hasBinData($armor['item_name_id'])): ?>
                                     <span class="admin-badge admin-badge-success" title="Has bin data">✓</span>
@@ -318,6 +328,7 @@ include '../../includes/admin-header.php';
         </div>
     </section>
 </main>
+
 
 <?php
 // Include admin footer

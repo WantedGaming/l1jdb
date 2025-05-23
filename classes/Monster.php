@@ -20,7 +20,8 @@ class Monster {
             $orderBy,
             'npc.npcid, npc.classId, npc.desc_kr, npc.desc_en, npc.impl, npc.spriteId, 
             npc.lvl, npc.hp, npc.mp, npc.ac, npc.str, npc.con, npc.dex, npc.wis, npc.intel, 
-            npc.mr, npc.exp, npc.alignment, npc.big, npc.weakAttr, npc.undead, npc.is_agro'
+            npc.mr, npc.exp, npc.alignment, npc.big, npc.weakAttr, npc.undead, npc.is_agro, 
+            npc.family, npc.is_bossmonster'
         );
     }
     
@@ -44,7 +45,8 @@ class Monster {
             'npc.npcid ASC',
             'npc.npcid, npc.classId, npc.desc_kr, npc.desc_en, npc.impl, npc.spriteId, 
             npc.lvl, npc.hp, npc.mp, npc.ac, npc.str, npc.con, npc.dex, npc.wis, npc.intel, 
-            npc.mr, npc.exp, npc.alignment, npc.big, npc.weakAttr, npc.undead, npc.is_agro'
+            npc.mr, npc.exp, npc.alignment, npc.big, npc.weakAttr, npc.undead, npc.is_agro, 
+            npc.family, npc.is_bossmonster'
         );
     }
     
