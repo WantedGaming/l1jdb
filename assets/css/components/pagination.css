@@ -1,0 +1,198 @@
+/* 
+ * pagination.css
+ * Pagination components for MMORPG Database
+ */
+
+/* Simple Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--spacing-sm);
+    background-color: var(--primary);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed);
+    margin: 0 4px 8px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    text-decoration: none;
+}
+
+.pagination-link:hover,
+.pagination-link.active {
+    background-color: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--spacing-sm);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Enhanced Pagination with Navigation */
+.pagination-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.pagination-info {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.pagination-prev,
+.pagination-next {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text);
+    transition: color var(--transition-speed);
+    text-decoration: none;
+}
+
+.pagination-prev:hover,
+.pagination-next:hover {
+    color: var(--accent);
+}
+
+.pagination-nav .pagination {
+    margin-top: 0;
+}
+
+/* Disabled Pagination Link */
+.pagination-link.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Pagination Size Variants */
+.pagination-sm .pagination-link,
+.pagination-sm .pagination-ellipsis {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+}
+
+.pagination-lg .pagination-link,
+.pagination-lg .pagination-ellipsis {
+    min-width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+}
+
+/* Pagination with Page Size Selection */
+.pagination-options {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.pagination-size-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.pagination-size-select {
+    background-color: var(--secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    border-radius: var(--border-radius-sm);
+    padding: 4px var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.pagination-size-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Pagination with Jump to Page */
+.pagination-jump {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+}
+
+.pagination-jump-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.pagination-jump-input {
+    width: 60px;
+    background-color: var(--secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    border-radius: var(--border-radius-sm);
+    padding: 4px var(--spacing-sm);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.pagination-jump-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.pagination-jump-button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    padding: 4px var(--spacing-sm);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.pagination-jump-button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .pagination-nav {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .pagination-info {
+        order: -1;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .pagination-options {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pagination-jump {
+        margin-left: 0;
+        margin-top: var(--spacing-md);
+        justify-content: center;
+    }
+}

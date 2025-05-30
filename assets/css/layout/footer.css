@@ -1,0 +1,231 @@
+/* 
+ * footer.css
+ * Footer styles for MMORPG Database
+ */
+
+/* Main Footer */
+.footer {
+    background-color: var(--primary);
+    padding: var(--spacing-xl) 0;
+    margin-top: var(--spacing-xl);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+/* Footer Sections */
+.footer-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.footer-logo {
+    margin-bottom: var(--spacing-md);
+}
+
+.footer-logo img {
+    height: 40px;
+}
+
+.footer-text {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.7;
+}
+
+.footer-title {
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    color: white;
+}
+
+.footer-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    background-color: var(--accent);
+    margin-top: var(--spacing-sm);
+}
+
+/* Footer Links */
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-link {
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer-link a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color var(--transition-speed);
+    display: inline-block;
+    padding: 4px 0;
+    text-decoration: none;
+}
+
+.footer-link a:hover {
+    color: var(--accent);
+}
+
+/* Copyright Section */
+.copyright {
+    text-align: center;
+    padding-top: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+}
+
+/* Contact Information */
+.footer-contact-info {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-contact-item i {
+    margin-right: var(--spacing-sm);
+    color: var(--accent);
+    width: 16px;
+    text-align: center;
+}
+
+/* Social Media Links */
+.footer-social {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.footer-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    transition: all var(--transition-speed);
+}
+
+.footer-social-link:hover {
+    background-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+/* Newsletter Signup */
+.footer-newsletter {
+    margin-top: var(--spacing-md);
+}
+
+.footer-newsletter-form {
+    display: flex;
+    margin-top: var(--spacing-sm);
+}
+
+.footer-newsletter-input {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: none;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    padding: 8px 12px;
+    color: white;
+}
+
+.footer-newsletter-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.footer-newsletter-button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    padding: 0 var(--spacing-md);
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.footer-newsletter-button:hover {
+    background-color: #ff6b3f;
+}
+
+/* Legal Links */
+.footer-legal {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-sm);
+}
+
+.footer-legal a {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    transition: color var(--transition-speed);
+    text-decoration: none;
+}
+
+.footer-legal a:hover {
+    color: white;
+}
+
+/* Footer Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .footer-section {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .footer-legal {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+}
+
+/* Admin Footer */
+.admin-footer {
+    background-color: var(--admin-primary);
+    padding: var(--spacing-lg) 0;
+    margin-top: var(--spacing-xl);
+    border-top: 1px solid var(--admin-border);
+    color: var(--admin-light);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.admin-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .admin-footer-content {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+}

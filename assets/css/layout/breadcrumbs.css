@@ -1,0 +1,182 @@
+/* 
+ * breadcrumbs.css
+ * Breadcrumb navigation styles for MMORPG Database
+ */
+
+/* Breadcrumb Container */
+.breadcrumb-nav {
+    margin-bottom: var(--spacing-lg);
+}
+
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--primary);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 0;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Separator between items */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    margin: 0 var(--spacing-sm);
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+}
+
+.breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color var(--transition-speed);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--accent);
+}
+
+.breadcrumb-item.active {
+    color: white;
+    font-weight: 500;
+}
+
+/* Icon in breadcrumb */
+.breadcrumb-icon {
+    display: inline-flex;
+    font-size: 0.9em;
+}
+
+/* Simple text breadcrumb style */
+.breadcrumb-simple {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.breadcrumb-simple a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.breadcrumb-simple a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-simple .breadcrumb-separator {
+    margin: 0 0.5rem;
+}
+
+.breadcrumb-simple .breadcrumb-current {
+    color: white;
+    font-weight: 500;
+}
+
+/* Monster specific breadcrumb */
+.monster-breadcrumb {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.monster-breadcrumb a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.monster-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.monster-breadcrumb .breadcrumb-separator {
+    margin: 0 0.5rem;
+}
+
+.monster-breadcrumb .breadcrumb-current {
+    color: white;
+    font-weight: 500;
+}
+
+/* Enhanced visual breadcrumb */
+.breadcrumb-enhanced {
+    display: flex;
+    margin-bottom: var(--spacing-lg);
+}
+
+.breadcrumb-step {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.breadcrumb-step:not(:last-child)::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(255,255,255,0.3)'%3E%3Cpath d='M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 var(--spacing-sm);
+}
+
+.breadcrumb-link {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--primary);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+}
+
+.breadcrumb-link:hover {
+    background-color: var(--secondary);
+    color: var(--accent);
+}
+
+.breadcrumb-link.active {
+    background-color: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.breadcrumb-link i {
+    margin-right: var(--spacing-sm);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .breadcrumb {
+        padding: var(--spacing-sm);
+    }
+    
+    .breadcrumb-item {
+        font-size: 0.9rem;
+    }
+    
+    .breadcrumb-enhanced {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .breadcrumb-step:not(:last-child)::after {
+        transform: rotate(90deg);
+        margin: var(--spacing-sm) 0;
+    }
+}

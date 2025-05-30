@@ -1,0 +1,238 @@
+/* 
+ * filters.css
+ * Filter components for MMORPG Database
+ */
+
+/* Filters Container */
+.filters {
+    background-color: var(--primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--card-shadow);
+    border: var(--border-light);
+}
+
+/* Standard Filter Form */
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.filter-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    color: var(--white-90);
+}
+
+.filter-select,
+.filter-input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background-color: var(--secondary);
+    border: 1px solid var(--white-20);
+    border-radius: var(--border-radius-sm);
+    color: var(--text);
+    transition: border-color var(--transition-speed);
+}
+
+.filter-select:focus,
+.filter-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Filter Actions */
+.filter-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+/* Inline filter form for single row display */
+.filter-form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--spacing-md);
+}
+
+.filter-form-inline .filter-group {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.filter-form-inline .filter-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: flex-end;
+    margin-top: 0;
+}
+
+/* Filter Reset Button */
+.filter-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--secondary);
+    color: var(--text);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+    text-align: center;
+    font-weight: 500;
+    border: none;
+}
+
+.filter-reset:hover {
+    background-color: var(--white-20);
+    color: var(--text);
+}
+
+/* Filter Button */
+.filter-button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color var(--transition-speed);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.filter-button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Results Summary */
+.results-summary {
+    margin-bottom: var(--spacing-lg);
+    background-color: var(--primary);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border: var(--border-light);
+}
+
+.results-count {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--white-90);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Active Filters */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.active-filter-tag {
+    background-color: var(--accent);
+    color: white;
+    padding: 2px var(--spacing-sm);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.active-filter-tag .remove-filter {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    font-size: 10px;
+    transition: background-color var(--transition-speed);
+}
+
+.active-filter-tag .remove-filter:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Filters Toggle */
+.filters-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-weight: 500;
+    color: var(--accent);
+    cursor: pointer;
+    transition: color var(--transition-speed);
+}
+
+.filters-toggle:hover {
+    color: var(--accent-hover);
+}
+
+.filters-toggle-icon {
+    transition: transform var(--transition-speed);
+}
+
+.filters-toggle.active .filters-toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Collapsible Filters */
+.filters-collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.filters-collapsible.active {
+    max-height: 1000px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .filter-form-inline {
+        flex-direction: column;
+    }
+    
+    .filter-form-inline .filter-group {
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .filter-form-inline .filter-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .filter-form-inline .filter-button,
+    .filter-form-inline .filter-reset {
+        width: 100%;
+    }
+    
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .active-filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

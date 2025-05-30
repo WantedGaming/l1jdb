@@ -583,7 +583,7 @@ function getMonsterSpriteUrl($spriteId) {
     }
     
     // Return placeholder if nothing exists
-    return SITE_URL . '/assets/img/placeholders/monster.png';
+    return SITE_URL . '/assets/img/placeholders/0.png';
 }
 
 // ============================================================================

@@ -7,8 +7,9 @@ define('DB_PASS', '');
 define('CHARSET', 'utf8mb4');
 
 // Site Configuration
-define('SITE_NAME', 'L1J-R Database');
+define('SITE_NAME', 'L1J-R DB');
 define('SITE_URL', 'http://localhost/l1jdb/');
+define('BASE_URL', '/l1jdb/');
 define('ADMIN_EMAIL', 'admin@example.com');
 
 // Pagination Settings

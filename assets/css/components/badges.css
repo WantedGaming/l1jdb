@@ -1,0 +1,253 @@
+/* 
+ * badges.css
+ * Badge components for MMORPG Database
+ */
+
+/* Base badge */
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Badge colors */
+.badge-primary {
+    background-color: var(--accent);
+    color: white;
+}
+
+.badge-secondary {
+    background-color: var(--white-20);
+    color: var(--white-90);
+}
+
+.badge-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #67d787;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.badge-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #ff6b7a;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.badge-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.badge-info {
+    background-color: rgba(23, 162, 184, 0.2);
+    color: #5bc0de;
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+/* Badge sizes */
+.badge-sm {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+}
+
+.badge-lg {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+}
+
+/* Badge types */
+.badge-pill {
+    border-radius: 50px;
+}
+
+.badge-rounded {
+    border-radius: 4px;
+}
+
+/* Detail badges */
+.detail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 4px var(--spacing-sm);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-dungeon {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #ff6b7a;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.badge-field {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #67d787;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.badge-underwater {
+    background-color: rgba(0, 123, 255, 0.2);
+    color: #5bc0de;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+/* Active filter badge */
+.active-filter-tag {
+    background-color: var(--accent);
+    color: white;
+    padding: 2px var(--spacing-sm);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Monster level badges */
+.monster-level-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Level-based color coding */
+.level-0, .level-1 { background: linear-gradient(135deg, var(--level-1-from) 0%, var(--level-1-to) 100%); }
+.level-2, .level-3 { background: linear-gradient(135deg, var(--level-2-from) 0%, var(--level-2-to) 100%); }
+.level-4, .level-5 { background: linear-gradient(135deg, var(--level-3-from) 0%, var(--level-3-to) 100%); }
+.level-6, .level-7 { background: linear-gradient(135deg, var(--level-4-from) 0%, var(--level-4-to) 100%); }
+.level-8, .level-9 { background: linear-gradient(135deg, var(--level-5-from) 0%, var(--level-5-to) 100%); }
+
+/* Monster type badges */
+.monster-type-badge {
+    background: var(--black-80);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.monster-type-badge.blackknight { background: linear-gradient(135deg, #1f2937 0%, #374151 100%); }
+.monster-type-badge.doppelganger { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
+.monster-type-badge.boss { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+.monster-type-badge.aggressive { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); }
+.monster-type-badge.peaceful { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+.monster-type-badge.undead { background: linear-gradient(135deg, #6b21a8 0%, #581c87 100%); }
+
+/* Crafting grade badges */
+.card-badge.normal {
+    background-color: var(--grade-normal-bg);
+    color: white;
+}
+
+.card-badge.advanc {
+    background-color: var(--grade-advanc-bg);
+    color: white;
+}
+
+.card-badge.rare {
+    background-color: var(--grade-rare-bg);
+    color: white;
+}
+
+.card-badge.hero {
+    background-color: var(--grade-hero-bg);
+    color: black;
+}
+
+.card-badge.legend {
+    background-color: var(--grade-legend-bg);
+    color: white;
+}
+
+.card-badge.myth {
+    background-color: var(--grade-myth-bg);
+    color: white;
+}
+
+.card-badge.only {
+    background-color: var(--grade-only-bg);
+    color: black;
+}
+
+/* Admin badge variations */
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.admin-badge-success {
+    background-color: var(--admin-success);
+    color: white;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.admin-badge-secondary {
+    background-color: var(--admin-secondary);
+    color: var(--admin-light);
+    border: 1px solid var(--admin-border);
+}
+
+/* Activity badges */
+.activity-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+}
+
+.activity-badge.login {
+    background-color: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.activity-badge.logout {
+    background-color: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.activity-badge.create {
+    background-color: rgba(0, 123, 255, 0.15);
+    color: #007bff;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.activity-badge.update {
+    background-color: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.activity-badge.delete {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.activity-badge.view {
+    background-color: rgba(23, 162, 184, 0.15);
+    color: #17a2b8;
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}

@@ -1,0 +1,102 @@
+graph TD
+    main["main.css (Main Entry Point)"]
+    
+    %% Base styles section
+    base["Base"]
+    variables["variables.css"]
+    reset["reset.css"]
+    typography["typography.css"]
+    animations["animations.css"]
+    
+    %% Layout section
+    layout["Layout"]
+    container["container.css"]
+    grid["grid.css"]
+    header["header.css"]
+    footer["footer.css"]
+    breadcrumbs["breadcrumbs.css"]
+    
+    %% Components section
+    components["Components"]
+    buttons["buttons.css"]
+    cards["cards.css"]
+    forms["forms.css"]
+    tables["tables.css"]
+    navigation["navigation.css"]
+    pagination["pagination.css"]
+    alerts["alerts.css"]
+    badges["badges.css"]
+    dropdown["dropdown.css"]
+    search["search.css"]
+    activity["activity.css"]
+    
+    %% Features section
+    features["Features"]
+    monsters["monsters.css"]
+    crafting["crafting.css"]
+    items["items.css"]
+    
+    %% Pages section
+    pages["Pages"]
+    home["home.css"]
+    detail["detail.css"]
+    listing["listing.css"]
+    admin["admin.css"]
+    
+    %% Utilities section
+    utilities["Utilities"]
+    spacing["spacing.css"]
+    display["display.css"]
+    responsive["responsive.css"]
+    print["print.css"]
+    
+    %% Connections
+    main --> base
+    main --> layout
+    main --> components
+    main --> features
+    main --> pages
+    main --> utilities
+    
+    base --> variables
+    base --> reset
+    base --> typography
+    base --> animations
+    
+    layout --> container
+    layout --> grid
+    layout --> header
+    layout --> footer
+    layout --> breadcrumbs
+    
+    components --> buttons
+    components --> cards
+    components --> forms
+    components --> tables
+    components --> navigation
+    components --> pagination
+    components --> alerts
+    components --> badges
+    components --> dropdown
+    components --> search
+    components --> activity
+    
+    features --> monsters
+    features --> crafting
+    features --> items
+    
+    pages --> home
+    pages --> detail
+    pages --> listing
+    pages --> admin
+    
+    utilities --> spacing
+    utilities --> display
+    utilities --> responsive
+    utilities --> print
+    
+    classDef sectionClass fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef fileClass fill:#bbf,stroke:#333,stroke-width:1px;
+    
+    class main,base,layout,components,features,pages,utilities sectionClass;
+    class variables,reset,typography,animations,container,grid,header,footer,breadcrumbs,buttons,cards,forms,tables,navigation,pagination,alerts,badges,dropdown,search,activity,monsters,crafting,items,home,detail,listing,admin,spacing,display,responsive,print fileClass;
